@@ -7,12 +7,12 @@ However, due to personal limited funds, I cannot test every game myself.
 
 # What is SteamStub DRM?
 
-<blockquote>
+```
 Steamworks Digital Rights Management wraps your game's compiled executable and checks to make sure that it is running under an authenticated instance of Steam. This DRM solution is the same as the one used to protect games like Half-Life 2 and Counter-Strike: Source. Steamworks DRM has been heavily road-tested and is customer-friendly. 
 In addition to DRM solutions, Steamworks also offers protection for game through day one release by shipping encrypted media to stores worldwide. There's no worry that your game will leak early from the manufacturing path, because your game stays encrypted until the moment you decide to release it. This protection can be added to your game simply by handing us finished bits or a gold master. 
 
 ref: hxxps://partner.steamgames.com/documentation/api
-</blockquote>
+```
 
 # Supported Versions
 
@@ -32,7 +32,7 @@ Steamless currently supports the following SteamStub DRM variants:
 
 # Legal
 
-<blockquote>
+```
 Steamless is released under the following license:
 Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International
 
@@ -52,7 +52,7 @@ No code used within Steamless is taken from Valve or any of its partners / affil
 Steamless is released for educational purposes in the hopes to learn and understand DRM technologies. 
 
 Use Steamless at your own risk. I, atom0s, am not responsible for what happens while using Steamless. You take full reponsibility for any outcome that happens to you while using this application. Do not distribute unpacked files.
-</blockquote>
+```
 
 # Thanks
 
