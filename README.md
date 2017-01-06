@@ -59,14 +59,22 @@ Use Steamless at your own risk. I, atom0s, am not responsible for what happens w
 Thanks to Cyanic (aka Golem_x86) for his notes and help with parts of the stub headers and such.<br>
 You can find his information here: http://pcgamingwiki.com/wiki/User:Cyanic/Steam_DRM
 
+# Compiling Steamless
 
+Steamless is coded using Visual Studio 2015 (Update 3) at this time.<br>
+To compile, you should only need to load the sln file and compile as-is.
 
+No changes should be needed to the solution or source.
 
+# Contributing To Steamless (Guidelines)
 
+I welcome and encourage contributions to the Steamless project. However, I do have some guidelines I wish for people to follow when doing so.
 
+  * Please follow the similar coding style / naming conventions found in Steamless already.
+  * Please do not use tabs. Tabs should be 4 spaces instead.  
+  * Please do not introduce additional dependencies without a discussion before hand.
+  * Please do not alter or remove any copyrights without a discussion prior.
+  * Please do not hard code information specific to any one target. Steamless should be dynamic full all titles.
 
-
-
-
-
-
+Discussions can be opened within the Issue tracker here:
+  * https://github.com/atom0s/Steamless/issues
