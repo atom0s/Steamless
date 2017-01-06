@@ -1,0 +1,316 @@
+﻿<!--
+ * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
+ * Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ *
+ * By using Steamless, you agree to the above license and its terms.
+ *
+ *      Attribution - You must give appropriate credit, provide a link to the license and indicate if changes were
+ *                    made. You must do so in any reasonable manner, but not in any way that suggests the licensor
+ *                    endorses you or your use.
+ *
+ *   Non-Commercial - You may not use the material (Steamless) for commercial purposes.
+ *
+ *   No-Derivatives - If you remix, transform, or build upon the material (Steamless), you may not distribute the
+ *                    modified material. You are, however, allowed to submit the modified works back to the original
+ *                    Steamless project in attempt to have it added to the original project.
+ *
+ * You may not apply legal terms or technological measures that legally restrict others
+ * from doing anything the license permits.
+ *
+ * No warranties are given.
+-->
+<UserControl x:Class="Steamless.View.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="450" SnapsToDevicePixels="True">
+
+    <!-- Main Content -->
+    <Grid x:Name="LayoutRoot" SnapsToDevicePixels="True">
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,20,0,0" SnapsToDevicePixels="True">
+            <!-- Logo -->
+            <Image Source="../Assets/steam.png" Width="150" Margin="0" />
+            <Label Content="Steamless" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0" Padding="0" SnapsToDevicePixels="True" RenderOptions.EdgeMode="Aliased">
+                <Label.Foreground>
+                    <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1" RenderOptions.EdgeMode="Aliased">
+                        <GradientStop Color="#E7E7E7" Offset="0" />
+                        <GradientStop Color="#969696" Offset="1" />
+                    </LinearGradientBrush>
+                </Label.Foreground>
+                <Label.Effect>
+                    <DropShadowEffect Color="#80000000" BlurRadius="5" ShadowDepth="1" RenderOptions.EdgeMode="Aliased" />
+                </Label.Effect>
+            </Label>
+            <TextBlock Foreground="#F7F7F7" HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding MainWindow.SteamlessVersion, Source={StaticResource ViewModelLocator}, FallbackValue='0.0.0.0', StringFormat={}Version: {0}}" />
+
+            <!-- Project Links -->
+            <Border Margin="0,15,0,0" Background="#80000000" BorderBrush="#40595959" BorderThickness="0,1,0,1" ClipToBounds="True">
+                <Border Background="Transparent" BorderBrush="#40595959" BorderThickness="0,10,0,0" Margin="0,-11,0,2">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="0" BlurRadius="10"/>
+                    </Border.Effect>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Label Margin="2">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="Background" Value="#0F000000" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                            <Hyperlink NavigateUri="http://atom0s.com/" Foreground="#c0dd65">Homepage
+                                <Hyperlink.TextDecorations>
+                                    <TextDecorationCollection>
+                                        <TextDecoration PenThicknessUnit="FontRecommended" PenOffset="3">
+                                            <TextDecoration.Pen>
+                                                <Pen Thickness="2" Brush="#88A825">
+                                                    <Pen.DashStyle>
+                                                        <DashStyle Dashes="2"/>
+                                                    </Pen.DashStyle>
+                                                </Pen>
+                                            </TextDecoration.Pen>
+                                        </TextDecoration>
+                                    </TextDecorationCollection>
+                                </Hyperlink.TextDecorations>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="RequestNavigate">
+                                        <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Hyperlink>
+                        </Label>
+                        <BulletDecorator HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <BulletDecorator.Bullet>
+                                <Ellipse Height="3" Width="3" Fill="White" Margin="2" />
+                            </BulletDecorator.Bullet>
+                        </BulletDecorator>
+                        <Label Margin="2">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="Background" Value="#0F000000" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                            <Hyperlink NavigateUri="http://atom0s.com/forums/" Foreground="#c0dd65">Forums
+                                <Hyperlink.TextDecorations>
+                                    <TextDecorationCollection>
+                                        <TextDecoration PenThicknessUnit="FontRecommended" PenOffset="3">
+                                            <TextDecoration.Pen>
+                                                <Pen Thickness="2" Brush="#88A825">
+                                                    <Pen.DashStyle>
+                                                        <DashStyle Dashes="2"/>
+                                                    </Pen.DashStyle>
+                                                </Pen>
+                                            </TextDecoration.Pen>
+                                        </TextDecoration>
+                                    </TextDecorationCollection>
+                                </Hyperlink.TextDecorations>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="RequestNavigate">
+                                        <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Hyperlink>
+                        </Label>
+                        <BulletDecorator HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <BulletDecorator.Bullet>
+                                <Ellipse Height="3" Width="3" Fill="White" Margin="2" />
+                            </BulletDecorator.Bullet>
+                        </BulletDecorator>
+                        <Label Margin="2">
+                            <Label.Style>
+                                <Style TargetType="Label">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="Background" Value="#0F000000" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Label.Style>
+                            <Hyperlink NavigateUri="http://git.atom0s.com/" Foreground="#c0dd65">Repositories
+                                <Hyperlink.TextDecorations>
+                                    <TextDecorationCollection>
+                                        <TextDecoration PenThicknessUnit="FontRecommended" PenOffset="3">
+                                            <TextDecoration.Pen>
+                                                <Pen Thickness="2" Brush="#88A825">
+                                                    <Pen.DashStyle>
+                                                        <DashStyle Dashes="2"/>
+                                                    </Pen.DashStyle>
+                                                </Pen>
+                                            </TextDecoration.Pen>
+                                        </TextDecoration>
+                                    </TextDecorationCollection>
+                                </Hyperlink.TextDecorations>
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="RequestNavigate">
+                                        <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </Hyperlink>
+                        </Label>
+                    </StackPanel>
+                </Border>
+            </Border>
+
+            <!-- Credits -->
+            <StackPanel HorizontalAlignment="Center" Margin="0,10,0,0">
+                <StackPanel.Resources>
+                    <Style x:Key="StackPanelLabelCenter" TargetType="{x:Type Label}">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="1" />
+                    </Style>
+                    <Style BasedOn="{StaticResource StackPanelLabelCenter}" TargetType="{x:Type Label}" />
+                </StackPanel.Resources>
+                <Label Content="Credits" FontSize="18" FontWeight="Bold" />
+                <Label Content="atom0s - Lead Developer" Foreground="#c0dd65" />
+                <Label Content="Cyanic (aka Golem_x86) - For his work / research." />
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,0">
+                <StackPanel.Resources>
+                    <Style x:Key="StackPanelLabelCenter" TargetType="{x:Type Label}">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="1" />
+                    </Style>
+                    <Style BasedOn="{StaticResource StackPanelLabelCenter}" TargetType="{x:Type Label}" />
+                </StackPanel.Resources>
+                <Label Content="External Library Credits" FontSize="18" FontWeight="Bold" />
+                <Label Content="GalaSoft Mvvm Light Toolkit" />
+                <Label Content="Mahapps.Metro &amp; Newtonsoft Json" />
+                <Label Content="Oren Nachman, Massimo Savazzi, Templarian - XAML Icons" />
+            </StackPanel>
+
+            <!-- Donation Info -->
+            <Border BorderThickness="0,0,0,1.5" Margin="5" Padding="0">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" Opacity="0.7">
+                        <GradientStop Offset="0.2" Color="#00000000"/>
+                        <GradientStop Offset="0.5" Color="White"/>
+                        <GradientStop Offset="0.8" Color="#00000000"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
+            <StackPanel HorizontalAlignment="Center" Margin="0,0,0,0">
+                <StackPanel.Resources>
+                    <Style x:Key="StackPanelLabelCenter" TargetType="{x:Type Label}">
+                        <Setter Property="HorizontalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="1" />
+                    </Style>
+                    <Style BasedOn="{StaticResource StackPanelLabelCenter}" TargetType="{x:Type Label}" />
+                </StackPanel.Resources>
+                <Label Content="Donations" FontSize="18" FontWeight="Bold" Margin="0" Padding="0" />
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label ToolTip="Donate via Paypal" Width="24" Height="24" Background="#0689c1" Margin="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Label.OpacityMask>
+                            <VisualBrush Visual="{StaticResource appbar_paypal}" />
+                        </Label.OpacityMask>
+                        <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=7U7Q2GRT6KUJN" Foreground="Transparent" FontSize="24">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="RequestNavigate">
+                                    <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Hyperlink>
+                    </Label>
+                    <Label ToolTip="Donate via Paypal" Margin="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=7U7Q2GRT6KUJN" Foreground="#c0dd65" >Donate via Paypal
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="RequestNavigate">
+                                    <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Hyperlink>
+                    </Label>
+                </StackPanel>
+                <Border BorderThickness="0,0,0,1.5" Margin="5" Padding="0">
+                    <Border.BorderBrush>
+                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" Opacity="0.7">
+                            <GradientStop Offset="0.2" Color="#00000000"/>
+                            <GradientStop Offset="0.5" Color="White"/>
+                            <GradientStop Offset="0.8" Color="#00000000"/>
+                        </LinearGradientBrush>
+                    </Border.BorderBrush>
+                </Border>
+            </StackPanel>
+
+            <!-- Important Information, Legal, Notes -->
+            <Border BorderBrush="#595959" BorderThickness="1" Margin="5">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1" RenderOptions.EdgeMode="Aliased">
+                        <GradientStop Color="#252525" Offset="0" RenderOptions.EdgeMode="Aliased" />
+                        <GradientStop Color="#161616" Offset="0.9" RenderOptions.EdgeMode="Aliased" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <ScrollViewer Margin="1" BorderBrush="Transparent" BorderThickness="1" Height="125">
+                    <StackPanel>
+                        <StackPanel.Resources>
+                            <Style x:Key="LegalInformationLabelHeader" TargetType="{x:Type Label}">
+                                <Setter Property="FontSize" Value="18" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="Foreground" Value="#FFA8A8A8" />
+                                <Setter Property="HorizontalAlignment" Value="Left" />
+                            </Style>
+                            <Style x:Key="LegalInformationTextBlock" TargetType="{x:Type TextBlock}">
+                                <Setter Property="Foreground" Value="#E0FFFFFF" />
+                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                <Setter Property="Margin" Value="10,0,10,10" />
+                                <Setter Property="TextWrapping" Value="Wrap" />
+                            </Style>
+                            <Style BasedOn="{StaticResource LegalInformationTextBlock}" TargetType="{x:Type TextBlock}" />
+                        </StackPanel.Resources>
+
+                        <!-- Donation Information -->
+                        <Label Content="Donations" Style="{StaticResource LegalInformationLabelHeader}" />
+                        <TextBlock>
+                            Steamless is provided, as-is, for free. Donations are a way for users to show their support for my work.
+                            I do not accept donations in the attempt to assist with pirating games or other illegal activities. Do
+                            not contact me attempting to get help with pirating a game or any other illegal activity, I will not respond.
+                        </TextBlock>
+
+                        <!-- Legal Information -->
+                        <Label Content="Legal Information / Warranty" Style="{StaticResource LegalInformationLabelHeader}" />
+                        <TextBlock>
+                            Steamless is released under the following license:
+                            <LineBreak />
+                            Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International
+                            <LineBreak /><LineBreak />
+                            Unless otherwise separately undertaken by the Licensor, to the extent possible, the Licensor offers the Licensed Material 
+                            as-is and as-available, and makes no representations or warranties of any kind concerning the Licensed Material, whether 
+                            express, implied, statutory, or other. This includes, without limitation, warranties of title, merchantability, fitness 
+                            for a particular purpose, non-infringement, absence of latent or other defects, accuracy, or the presence or absence of 
+                            errors, whether or not known or discoverable. Where disclaimers of warranties are not allowed in full or in part, this 
+                            disclaimer may not apply to You.
+                            <LineBreak /><LineBreak />
+                            Steamless is not intended for malicious use or for the use of obtaining or playing games illegally.
+                            <LineBreak />
+                            Steamless should only be used on games that you legally purchased and own.
+                            <LineBreak /><LineBreak />
+                            Steamless is not associated with Steam or any of its partners / affiliates.
+                            <LineBreak /><LineBreak />
+                            No code used within Steamless is taken from Valve or any of its partners / affiliates.
+                            <LineBreak />
+                            All work is original and done for educational purposes.
+                            <LineBreak /><LineBreak />
+                            Steam © 2003 - 2016 Valve Corporation. All rights reserved.
+                        </TextBlock>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Close Button -->
+            <Button Content="Close" Width="125" Margin="2,2,2,12" HorizontalAlignment="Center" VerticalAlignment="Center" Command="{Binding MainWindow.OnShowAboutViewCommand, Source={StaticResource ViewModelLocator}}" />
+        </StackPanel>
+    </Grid>
+</UserControl>

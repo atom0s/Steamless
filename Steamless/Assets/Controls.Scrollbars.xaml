@@ -1,0 +1,448 @@
+﻿<!--
+ * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
+ * Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ *
+ * By using Steamless, you agree to the above license and its terms.
+ *
+ *      Attribution - You must give appropriate credit, provide a link to the license and indicate if changes were
+ *                    made. You must do so in any reasonable manner, but not in any way that suggests the licensor
+ *                    endorses you or your use.
+ *
+ *   Non-Commercial - You may not use the material (Steamless) for commercial purposes.
+ *
+ *   No-Derivatives - If you remix, transform, or build upon the material (Steamless), you may not distribute the
+ *                    modified material. You are, however, allowed to submit the modified works back to the original
+ *                    Steamless project in attempt to have it added to the original project.
+ *
+ * You may not apply legal terms or technological measures that legally restrict others
+ * from doing anything the license permits.
+ *
+ * No warranties are given.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
+        <Grid x:Name="Root" Margin="0">
+            <Grid.Resources>
+                <ControlTemplate x:Key="RepeatButtonTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Margin="0" Background="Transparent">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="HorizontalIncrementTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HoverPath">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard />
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.5" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle Fill="#58595B" Width="18" Height="13" Margin="0" />
+                        <Rectangle x:Name="HoverPath" Opacity="0" Fill="#626262" Width="18" Height="13" Margin="0" />
+                        <Rectangle x:Name="DisabledElement"
+                       Fill="{DynamicResource WhiteBrush}"
+                       Opacity="0"
+                       RadiusY="2"
+                       RadiusX="2" />
+                        <Path Stroke="#AFADAD" Fill="#AFADAD" Data="M0,0 L1,0.5 0,1Z" Width="4" Height="5" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="HorizontalDecrementTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HoverPath">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard />
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.5" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle Fill="#58595B" Width="18" Height="13" Margin="0" />
+                        <Rectangle x:Name="HoverPath" Opacity="0" Fill="#626262" Width="18" Height="13" Margin="0" />
+                        <Rectangle x:Name="DisabledElement"
+                       Fill="{DynamicResource WhiteBrush}"
+                       Opacity="0"
+                       RadiusY="2"
+                       RadiusX="2" />
+                        <Path Stroke="#AFADAD" Fill="#AFADAD" Data="M0,0.5 L1,1 1,0Z" Width="4" Height="5" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="HorizontalThumbTemplate" TargetType="Thumb">
+                    <Grid Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="MouseOverRectangle">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PressedRectangle">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ThumbVisual">
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ThumbVisual" Margin="4,0,4,0">
+                            <Rectangle x:Name="Background" Fill="#58595B" />
+                            <Rectangle x:Name="MouseOverRectangle" Opacity="0" Fill="#626262" />
+                            <Rectangle x:Name="PressedRectangle" Opacity="0" Fill="#626262" />
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="0" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="6" Background="White" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Grid.Resources>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="MouseOver" />
+                    <VisualState x:Name="Disabled">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Root">
+                                <SplineDoubleKeyFrame KeyTime="0" Value="0.5" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid x:Name="HorizontalRoot" Margin="0" Height="13">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="18" />
+                    <ColumnDefinition Width="0.00001*" />
+                    <ColumnDefinition Width="18" />
+                </Grid.ColumnDefinitions>
+                <RepeatButton x:Name="HorizontalSmallDecrease" Command="ScrollBar.LineLeftCommand" Width="18" Height="13" IsTabStop="False" Interval="50" Margin="0" Padding="0" Grid.Column="0" Template="{DynamicResource HorizontalDecrementTemplate}" />
+                <Track x:Name="PART_Track" IsDirectionReversed="False" Grid.Column="1">
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton x:Name="HorizontalLargeDecrease" Command="ScrollBar.PageLeftCommand" IsTabStop="False" Interval="50" Template="{DynamicResource RepeatButtonTemplate}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Template="{DynamicResource HorizontalThumbTemplate}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton x:Name="HorizontalLargeIncrease" Command="ScrollBar.PageRightCommand" IsTabStop="False" Interval="50" Template="{DynamicResource RepeatButtonTemplate}" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <RepeatButton x:Name="HorizontalSmallIncrease" Command="ScrollBar.LineRightCommand" Width="18" Height="13" IsTabStop="False" Interval="50" Margin="0" Padding="0" Grid.Column="2" Template="{DynamicResource HorizontalIncrementTemplate}" />
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+        <Grid x:Name="Root" Margin="0">
+            <Grid.Resources>
+                <ControlTemplate x:Key="RepeatButtonTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Background="Transparent" Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="VerticalIncrementTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HoverPath">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard />
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.5" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle Fill="#58595B" Width="13" Height="18" Margin="0" />
+                        <Rectangle x:Name="HoverPath" Opacity="0" Fill="#626262" Width="13" Height="18" Margin="0" />
+                        <Rectangle x:Name="DisabledElement"
+                       Fill="{DynamicResource WhiteBrush}"
+                       Opacity="0"
+                       RadiusY="2"
+                       RadiusX="2" />
+                        <Path Stroke="#AFADAD" Fill="#AFADAD" Data="M0,0 L1,0 0.5,1Z" Width="5" Height="4" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="VerticalDecrementTemplate" TargetType="RepeatButton">
+                    <Grid x:Name="Root" Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="HoverPath">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard />
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="Root">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="0.5" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Rectangle Fill="#58595B" Width="13" Height="18" Margin="0" />
+                        <Rectangle x:Name="HoverPath" Opacity="0" Fill="#626262" Width="13" Height="18" Margin="0" />
+                        <Rectangle x:Name="DisabledElement"
+                       Fill="{DynamicResource WhiteBrush}"
+                       Opacity="0"
+                       RadiusY="2"
+                       RadiusX="2" />
+                        <Path Stroke="#AFADAD" Fill="#AFADAD" Data="M0,1 L1,1 0.5,0Z" Width="5" Height="4" Stretch="Fill" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Grid>
+                </ControlTemplate>
+                <ControlTemplate x:Key="VerticalThumbTemplate" TargetType="Thumb">
+                    <Grid Margin="0">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="MouseOverRectangle">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.Opacity)" Storyboard.TargetName="PressedRectangle">
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <Storyboard>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="ThumbVisual">
+                                            <SplineDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ThumbVisual" Margin="0,4,0,4">
+                            <Rectangle x:Name="Background" Fill="#58595B" />
+                            <Rectangle x:Name="MouseOverRectangle" Opacity="0" Fill="#626262" />
+                            <Rectangle x:Name="PressedRectangle" Opacity="0" Fill="#626262" />
+                            <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                    <ColumnDefinition Width="1" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                    <RowDefinition Height="1" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="0" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="0" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="2" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="4" Background="White" />
+                                <Grid Grid.Column="0" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="2" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="4" Grid.Row="6" Background="White" />
+                                <Grid Grid.Column="6" Grid.Row="6" Background="White" />
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Grid.Resources>
+            <VisualStateManager.VisualStateGroups>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="MouseOver" />
+                    <VisualState x:Name="Disabled">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="Opacity" Storyboard.TargetName="Root">
+                                <SplineDoubleKeyFrame KeyTime="0" Value="0.5" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+            <Grid x:Name="VerticalRoot" Margin="0" Width="13">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="18" />
+                    <RowDefinition Height="0.00001*" />
+                    <RowDefinition Height="18" />
+                </Grid.RowDefinitions>
+                <RepeatButton x:Name="VerticalSmallDecrease" Command="ScrollBar.LineUpCommand" Width="13 " Height="18" IsTabStop="False" Interval="50" Margin="0" Padding="0" Grid.Row="0" Template="{DynamicResource VerticalDecrementTemplate}" />
+                <Track x:Name="PART_Track" IsDirectionReversed="true" Grid.Row="1">
+                    <Track.Resources>
+                        <system:Double x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}">50</system:Double>
+                    </Track.Resources>
+                    <Track.DecreaseRepeatButton>
+                        <RepeatButton x:Name="VerticalLargeDecrease" Command="ScrollBar.PageUpCommand" IsTabStop="False" Interval="50" Template="{DynamicResource RepeatButtonTemplate}" />
+                    </Track.DecreaseRepeatButton>
+                    <Track.Thumb>
+                        <Thumb Template="{DynamicResource VerticalThumbTemplate}" />
+                    </Track.Thumb>
+                    <Track.IncreaseRepeatButton>
+                        <RepeatButton x:Name="VerticalLargeIncrease" Command="ScrollBar.PageDownCommand" IsTabStop="False" Interval="50" Template="{DynamicResource RepeatButtonTemplate}" />
+                    </Track.IncreaseRepeatButton>
+                </Track>
+                <RepeatButton x:Name="VerticalSmallIncrease" Command="ScrollBar.LineDownCommand" Width="13" Height="18" IsTabStop="False" Interval="50" Margin="0" Padding="0" Grid.Row="2" Template="{DynamicResource VerticalIncrementTemplate}" />
+            </Grid>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Style.Triggers>
+            <Trigger Property="ScrollBar.Orientation" Value="Horizontal">
+                <Setter Property="FrameworkElement.Width" Value="Auto" />
+                <Setter Property="FrameworkElement.Height" Value="13" />
+                <Setter Property="Control.Template" Value="{DynamicResource HorizontalScrollBar}" />
+            </Trigger>
+            <Trigger Property="ScrollBar.Orientation" Value="Vertical">
+                <Setter Property="FrameworkElement.Width" Value="12" />
+                <Setter Property="FrameworkElement.Height" Value="Auto" />
+                <Setter Property="Control.Template" Value="{DynamicResource VerticalScrollBar}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="{x:Type ScrollViewer}">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <ScrollContentPresenter Grid.Column="0" />
+                        <ScrollBar Name="PART_VerticalScrollBar" Grid.Row="0" Grid.Column="1" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
+                        <ScrollBar Name="PART_HorizontalScrollBar" Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Value="{TemplateBinding HorizontalOffset}" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                        <Rectangle Grid.Row="1" Grid.Column="1" Fill="Transparent"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

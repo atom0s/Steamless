@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless", "Steamless\Steamless.csproj", "{10AC8FDE-09D9-47B4-AA89-BADC40EECAAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.API", "Steamless.API\Steamless.API.csproj", "{56C95629-3B34-47FE-B988-04274409294F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamplePlugin", "ExamplePlugin\ExamplePlugin.csproj", "{97AC964A-E56F-415C-BAEA-D503E3D4D7B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant30.x86", "Steamless.Unpacker.Variant30.x86\Steamless.Unpacker.Variant30.x86.csproj", "{B6BB7A32-AB23-4A25-8914-154879AAD3FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant31.x86", "Steamless.Unpacker.Variant31.x86\Steamless.Unpacker.Variant31.x86.csproj", "{0F2FAE37-F898-4392-B4F6-711954BEEB4F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant20.x86", "Steamless.Unpacker.Variant20.x86\Steamless.Unpacker.Variant20.x86.csproj", "{A40154CD-A0FD-4371-8099-CE277E0989AF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{10AC8FDE-09D9-47B4-AA89-BADC40EECAAB}.Debug|x86.ActiveCfg = Debug|x86
+		{10AC8FDE-09D9-47B4-AA89-BADC40EECAAB}.Debug|x86.Build.0 = Debug|x86
+		{10AC8FDE-09D9-47B4-AA89-BADC40EECAAB}.Release|x86.ActiveCfg = Release|x86
+		{10AC8FDE-09D9-47B4-AA89-BADC40EECAAB}.Release|x86.Build.0 = Release|x86
+		{56C95629-3B34-47FE-B988-04274409294F}.Debug|x86.ActiveCfg = Debug|x86
+		{56C95629-3B34-47FE-B988-04274409294F}.Debug|x86.Build.0 = Debug|x86
+		{56C95629-3B34-47FE-B988-04274409294F}.Release|x86.ActiveCfg = Release|x86
+		{56C95629-3B34-47FE-B988-04274409294F}.Release|x86.Build.0 = Release|x86
+		{97AC964A-E56F-415C-BAEA-D503E3D4D7B8}.Debug|x86.ActiveCfg = Debug|x86
+		{97AC964A-E56F-415C-BAEA-D503E3D4D7B8}.Debug|x86.Build.0 = Debug|x86
+		{97AC964A-E56F-415C-BAEA-D503E3D4D7B8}.Release|x86.ActiveCfg = Release|x86
+		{97AC964A-E56F-415C-BAEA-D503E3D4D7B8}.Release|x86.Build.0 = Release|x86
+		{B6BB7A32-AB23-4A25-8914-154879AAD3FE}.Debug|x86.ActiveCfg = Debug|x86
+		{B6BB7A32-AB23-4A25-8914-154879AAD3FE}.Debug|x86.Build.0 = Debug|x86
+		{B6BB7A32-AB23-4A25-8914-154879AAD3FE}.Release|x86.ActiveCfg = Release|x86
+		{B6BB7A32-AB23-4A25-8914-154879AAD3FE}.Release|x86.Build.0 = Release|x86
+		{0F2FAE37-F898-4392-B4F6-711954BEEB4F}.Debug|x86.ActiveCfg = Debug|x86
+		{0F2FAE37-F898-4392-B4F6-711954BEEB4F}.Debug|x86.Build.0 = Debug|x86
+		{0F2FAE37-F898-4392-B4F6-711954BEEB4F}.Release|x86.ActiveCfg = Release|x86
+		{0F2FAE37-F898-4392-B4F6-711954BEEB4F}.Release|x86.Build.0 = Release|x86
+		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Debug|x86.ActiveCfg = Debug|x86
+		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Debug|x86.Build.0 = Debug|x86
+		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Release|x86.ActiveCfg = Release|x86
+		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

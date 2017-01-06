@@ -1,0 +1,151 @@
+﻿<!--
+ * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ *
+ * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+ * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
+ * Creative Commons, PO Box 1866, Mountain View, CA 94042, USA.
+ *
+ * By using Steamless, you agree to the above license and its terms.
+ *
+ *      Attribution - You must give appropriate credit, provide a link to the license and indicate if changes were
+ *                    made. You must do so in any reasonable manner, but not in any way that suggests the licensor
+ *                    endorses you or your use.
+ *
+ *   Non-Commercial - You may not use the material (Steamless) for commercial purposes.
+ *
+ *   No-Derivatives - If you remix, transform, or build upon the material (Steamless), you may not distribute the
+ *                    modified material. You are, however, allowed to submit the modified works back to the original
+ *                    Steamless project in attempt to have it added to the original project.
+ *
+ * You may not apply legal terms or technological measures that legally restrict others
+ * from doing anything the license permits.
+ *
+ * No warranties are given.
+-->
+<UserControl x:Class="Steamless.View.SplashView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="350">
+
+    <!-- Main Content -->
+    <Grid x:Name="LayoutRoot">
+        <StackPanel VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="0,100,0,0">
+            <!-- Logo -->
+            <Image Source="../Assets/steam.png" Width="200" Margin="0" />
+            <Label Content="Steamless" FontSize="32" FontWeight="Bold" HorizontalAlignment="Center" Margin="0" Padding="0" SnapsToDevicePixels="True">
+                <Label.Foreground>
+                    <LinearGradientBrush StartPoint=".5,0" EndPoint=".5,1">
+                        <GradientStop Color="#E7E7E7" Offset="0" />
+                        <GradientStop Color="#969696" Offset="1" />
+                    </LinearGradientBrush>
+                </Label.Foreground>
+                <Label.Effect>
+                    <DropShadowEffect Color="#80000000" BlurRadius="5" ShadowDepth="1" />
+                </Label.Effect>
+            </Label>
+            <Label Content="by atom0s" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" SnapsToDevicePixels="True">
+                <Label.Effect>
+                    <DropShadowEffect Color="#80000000" BlurRadius="5" ShadowDepth="2" />
+                </Label.Effect>
+            </Label>
+
+            <!-- Separator -->
+            <Border BorderThickness="0,0,0,1.5" Margin="10">
+                <Border.BorderBrush>
+                    <LinearGradientBrush StartPoint="0,1" EndPoint="1,0" Opacity="0.7">
+                        <GradientStop Offset="0.2" Color="#00000000"/>
+                        <GradientStop Offset="0.5" Color="White"/>
+                        <GradientStop Offset="0.8" Color="#00000000"/>
+                    </LinearGradientBrush>
+                </Border.BorderBrush>
+            </Border>
+
+            <!-- Task Information -->
+            <Grid DataContext="{Binding MainWindow.CurrentTask, Source={StaticResource ViewModelLocator}}" VerticalAlignment="Top" Margin="0,5,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ProgressBar Grid.ColumnSpan="2" Grid.Row="0" Foreground="#F7F7F7" Margin="5,0,5,0" Height="3" VerticalAlignment="Top" Value="{Binding Progress, Mode=OneWay}" Maximum="{Binding ProgressTotal, Mode=OneWay}">
+                    <ProgressBar.Style>
+                        <Style TargetType="{x:Type ProgressBar}" BasedOn="{StaticResource {x:Type ProgressBar}}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="IsIndeterminate" Value="False" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ProgressTotal, FallbackValue=0, Mode=OneWay}" Value="0">
+                                    <Setter Property="IsIndeterminate" Value="True" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Mode=OneWay}" Value="{x:Null}">
+                                    <Setter Property="IsIndeterminate" Value="False" />
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ProgressBar.Style>
+                </ProgressBar>
+                <TextBlock Grid.Column="0" Grid.Row="1" Foreground="White" VerticalAlignment="Top" Margin="5,5,0,0">
+                    <TextBlock.Style>
+                        <Style>
+                            <Setter Property="TextBlock.Text" Value="{Binding FileName, StringFormat='Downloading: {0}'}" />
+                            <Setter Property="TextBlock.HorizontalAlignment" Value="Left" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ProgressTotal, FallbackValue=0, Mode=OneWay}" Value="0">
+                                    <Setter Property="TextBlock.Text" Value="{Binding Text}" />
+                                    <Setter Property="TextBlock.HorizontalAlignment" Value="Center" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="1" Grid.Row="1" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,5,5,0">
+                    <TextBlock.Style>
+                        <Style>
+                            <Setter Property="TextBlock.Text">
+                                <Setter.Value>
+                                    <MultiBinding StringFormat="{}[{0:#,##0.0}KB / {1:#,##0.0}KB]">
+                                        <Binding Path="Progress" Mode="OneWay" />
+                                        <Binding Path="ProgressTotal" Mode="OneWay" />
+                                    </MultiBinding>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ProgressTotal, FallbackValue=0, Mode=OneWay}" Value="0">
+                                    <Setter Property="TextBlock.Text" Value="" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="{x:Type TextBlock}">
+                            <Setter Property="Text" Value="{Binding MainWindow.UpdateCount, Source={StaticResource ViewModelLocator}, FallbackValue=0, StringFormat={}{0:#} downloads remaining...}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding MainWindow.UpdateCount, Source={StaticResource ViewModelLocator}, FallbackValue=0}" Value="0">
+                                    <Setter Property="Text" Value="" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </StackPanel>
+
+        <!-- Version Information -->
+        <Grid Background="#40000000" VerticalAlignment="Bottom">
+            <StackPanel HorizontalAlignment="Left" Margin="5">
+                <TextBlock Foreground="#F7F7F7" FontFamily="Courier New" FontWeight="Bold"
+                           Text="{Binding MainWindow.SteamlessVersion, Source={StaticResource ViewModelLocator}, FallbackValue='0.0.0.0', StringFormat={}Steamless Version: {0}}"
+                           />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
