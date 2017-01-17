@@ -45,6 +45,9 @@
     <Compile Include="PE32\NativeApi32.cs" />
     <Compile Include="PE32\Pe32File.cs" />
     <Compile Include="PE32\Pe32Helpers.cs" />
+    <Compile Include="PE64\NativeApi64.cs" />
+    <Compile Include="PE64\Pe64File.cs" />
+    <Compile Include="PE64\Pe64Helpers.cs" />
     <Compile Include="SteamlessEvents.cs" />
     <Compile Include="Events\LogMessageEventArgs.cs" />
     <Compile Include="Events\LogMessageType.cs" />
@@ -54,9 +57,7 @@
     <Compile Include="Model\SteamlessPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PE64\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
