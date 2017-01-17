@@ -348,8 +348,11 @@ namespace Steamless.Unpacker.Variant20.x86
 
             // Obtain the main code section (typically .text)..
             var mainSection = this.File.GetOwnerSection(this.File.GetRvaFromVa(BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[3]).Take(4).ToArray(), 0)));
-            if (mainSection.PointerToRawData == 0 || mainSection.SizeOfRawData == 0)
-                return false;
+            if (this.SteamDrmpOffsets[3] != 0)
+            {
+                if (mainSection.PointerToRawData == 0 || mainSection.SizeOfRawData == 0)
+                    return false;
+            }
 
             this.Log($" --> {mainSection.SectionName} linked as main code section.", LogMessageType.Debug);
 
