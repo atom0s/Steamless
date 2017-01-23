@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant20.x86", "Steamless.Unpacker.Variant20.x86\Steamless.Unpacker.Variant20.x86.csproj", "{A40154CD-A0FD-4371-8099-CE277E0989AF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant31.x64", "Steamless.Unpacker.Variant31.x64\Steamless.Unpacker.Variant31.x64.csproj", "{05F540FB-D14B-4966-8DE2-591B76361CF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant30.x64", "Steamless.Unpacker.Variant30.x64\Steamless.Unpacker.Variant30.x64.csproj", "{03621EAD-77A7-4208-AFDF-4B8292230A71}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -45,6 +49,14 @@ Global
 		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Debug|x86.Build.0 = Debug|x86
 		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Release|x86.ActiveCfg = Release|x86
 		{A40154CD-A0FD-4371-8099-CE277E0989AF}.Release|x86.Build.0 = Release|x86
+		{05F540FB-D14B-4966-8DE2-591B76361CF0}.Debug|x86.ActiveCfg = Debug|x86
+		{05F540FB-D14B-4966-8DE2-591B76361CF0}.Debug|x86.Build.0 = Debug|x86
+		{05F540FB-D14B-4966-8DE2-591B76361CF0}.Release|x86.ActiveCfg = Release|x86
+		{05F540FB-D14B-4966-8DE2-591B76361CF0}.Release|x86.Build.0 = Release|x86
+		{03621EAD-77A7-4208-AFDF-4B8292230A71}.Debug|x86.ActiveCfg = Debug|x86
+		{03621EAD-77A7-4208-AFDF-4B8292230A71}.Debug|x86.Build.0 = Debug|x86
+		{03621EAD-77A7-4208-AFDF-4B8292230A71}.Release|x86.ActiveCfg = Release|x86
+		{03621EAD-77A7-4208-AFDF-4B8292230A71}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

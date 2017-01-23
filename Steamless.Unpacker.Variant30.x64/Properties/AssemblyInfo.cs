@@ -26,15 +26,15 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Steamless.Unpacker.Variant31.x86")]
-[assembly: AssemblyDescription("Steamless SteamStub Variant v3.1 (x86) Unpacker")]
+[assembly: AssemblyTitle("Steamless.Unpacker.Variant30.x64")]
+[assembly: AssemblyDescription("Steamless SteamStub Variant v3.0 (x64) Unpacker")]
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
-[assembly: AssemblyProduct("Steamless.Unpacker.Variant31.x86")]
+[assembly: AssemblyProduct("Steamless.Unpacker.Variant30.x64")]
 [assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: Guid("0f2fae37-f898-4392-b4f6-711954beeb4f")]
+[assembly: Guid("03621ead-77a7-4208-afdf-4b8292230a71")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

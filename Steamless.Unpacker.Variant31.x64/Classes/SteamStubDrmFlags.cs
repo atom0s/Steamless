@@ -23,18 +23,17 @@
  * No warranties are given.
  */
 
-using System.Reflection;
-using System.Runtime.InteropServices;
-
-[assembly: AssemblyTitle("Steamless.Unpacker.Variant31.x86")]
-[assembly: AssemblyDescription("Steamless SteamStub Variant v3.1 (x86) Unpacker")]
-[assembly: AssemblyConfiguration("Release")]
-[assembly: AssemblyCompany("atom0s")]
-[assembly: AssemblyProduct("Steamless.Unpacker.Variant31.x86")]
-[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2017")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: ComVisible(false)]
-[assembly: Guid("0f2fae37-f898-4392-b4f6-711954beeb4f")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+namespace Steamless.Unpacker.Variant31.x64.Classes
+{
+    /// <summary>
+    /// Steam Stub Variant 3.1 DRM Flags
+    /// </summary>
+    public enum SteamStubDrmFlags
+    {
+        NoModuleVerification = 0x02,
+        NoEncryption = 0x04,
+        NoOwnershipCheck = 0x10,
+        NoDebuggerCheck = 0x20,
+        NoErrorDialog = 0x40
+    }
+}
