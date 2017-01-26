@@ -5,6 +5,21 @@ Steamless is a DRM remover of the SteamStub variants.
 The goal of Steamless is to make a single solution for unpacking all Steam DRM packed files. Steamless aims to support as many games as possible.<br>
 However, due to personal limited funds, I cannot test every game myself.
 
+
+# What Steamless Wont Do For You
+
+Steamless removes the SteamStub DRM protection from games that have it, nothing more.<br>
+If the game you are unpacking makes use of the Steamworks API, Steamless **WILL NOT** remove this layer of DRM.
+
+  * Steamless will not remove the Steamworks API integrations in any game.
+  * Steamless is not made to assist with piracy.
+  * Steamless is not made to assist with bypassing anti-cheats or other protections.
+  
+This project makes static analysis on the games files that are protected with SteamStub possible.<br>
+Will this allow some games to run without Steam? Yes. But I do not promote piracy and will not help with it at all.
+
+Do not contact me or any contributor to this project with assistance on how to make a game work without Steam.
+
 # What is SteamStub DRM?
 
 ```
