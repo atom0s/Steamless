@@ -12,6 +12,7 @@ Steamless removes the SteamStub DRM protection from games that have it, nothing 
 If the game you are unpacking makes use of the Steamworks API, Steamless **WILL NOT** remove this layer of DRM.
 
   * Steamless will not remove the Steamworks API integrations in any game.
+  * Steamless will not handle CEG (Custom Executable Generation) DRM that is used by some games.
   * Steamless is not made to assist with piracy.
   * Steamless is not made to assist with bypassing anti-cheats or other protections.
   
