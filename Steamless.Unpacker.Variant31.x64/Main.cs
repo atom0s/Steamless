@@ -105,13 +105,15 @@ namespace Steamless.Unpacker.Variant31.x64
                 var bind = f.GetSectionData(".bind");
 
                 // Attempt to locate the known v3.x signature..
-                var varient = Pe64Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 41 50");
-                if (varient == 0) return false;
+                var variant = Pe64Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 41 50");
+                if (variant == 0) return false;
 
-                // Attempt to determine the varient version..
+                // Attempt to determine the variant version..
                 var offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 48"); // 3.0
                 if (offset == 0)
                     offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 41"); // 3.1
+                if (offset == 0)
+                    offset = Pe64Helpers.FindPattern(bind, "00 48 2D ?? ?? ?? ?? 48");
 
                 // Ensure a pattern was found..
                 if (offset == 0)
