@@ -30,7 +30,7 @@
         xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:view="clr-namespace:Steamless.View"
         mc:Ignorable="d" FontFamily="Tahoma" Icon="../Assets/steam.ico"
-        Title="Steamless" MinHeight="600" MaxHeight="800" MinWidth="450" Width="450" SizeToContent="Height"
+        Title="Steamless" MinHeight="600" MaxHeight="800" MinWidth="450" Width="525" SizeToContent="Height"
         TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display" ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True" WindowStartupLocation="CenterScreen" WindowStyle="None">
 

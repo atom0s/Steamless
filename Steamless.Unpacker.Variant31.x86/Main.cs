@@ -34,6 +34,7 @@ namespace Steamless.Unpacker.Variant31.x86
     using API.Services;
     using Classes;
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Security.Cryptography;
 
@@ -108,19 +109,29 @@ namespace Steamless.Unpacker.Variant31.x86
                 var varient = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
                 if (varient == 0) return false;
 
-                // Attempt to determine the varient version..
-                int headerSize;
-                var offset = Pe32Helpers.FindPattern(bind, "55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 68");
-                if (offset == 0)
-                {
-                    offset = Pe32Helpers.FindPattern(bind, "55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 8D 83");
-                    if (offset == 0)
-                        return false;
+                // Version patterns..
+                var varientPatterns = new List<KeyValuePair<string, int>>
+                    {
+                        new KeyValuePair<string, int>("55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 68", 0x10),                 // v3.1     [Original version?]
+                        new KeyValuePair<string, int>("55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 8D 83", 0x16),              // v3.1.1   [Newer, 3.1.1? (Seen 2015?)]
+                        new KeyValuePair<string, int>("55 8B EC 81 EC ?? ?? ?? ?? 56 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 8D", 0x10)   // v3.1.2   [Newer, 3.1.2? (Seen late 2017.)]
+                    };
 
-                    headerSize = BitConverter.ToInt32(bind, (int)offset + 22);
+                var headerSize = 0;
+                uint offset = 0;
+                foreach (var p in varientPatterns)
+                {
+                    offset = Pe32Helpers.FindPattern(bind, p.Key);
+                    if (offset <= 0)
+                        continue;
+
+                    headerSize = BitConverter.ToInt32(bind, (int)offset + p.Value);
+                    break;
                 }
-                else
-                    headerSize = BitConverter.ToInt32(bind, (int)offset + 16);
+
+                // Ensure valid data was found..
+                if (offset == 0 || headerSize == 0)
+                    return false;
 
                 return headerSize == 0xF0;
             }
