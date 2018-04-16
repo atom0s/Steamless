@@ -39,6 +39,7 @@ namespace Steamless.Unpacker.Variant20.x86
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 
@@ -68,7 +69,7 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Internal wrapper to log a message.

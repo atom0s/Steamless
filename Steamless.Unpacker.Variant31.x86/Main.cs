@@ -36,6 +36,7 @@ namespace Steamless.Unpacker.Variant31.x86
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Reflection;
     using System.Security.Cryptography;
 
     [SteamlessApiVersion(1, 0)]
@@ -64,7 +65,7 @@ namespace Steamless.Unpacker.Variant31.x86
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 1);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Internal wrapper to log a message.

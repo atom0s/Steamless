@@ -35,6 +35,7 @@ namespace Steamless.Unpacker.Variant31.x64
     using Classes;
     using System;
     using System.IO;
+    using System.Reflection;
     using System.Security.Cryptography;
 
     [SteamlessApiVersion(1, 0)]
@@ -53,17 +54,17 @@ namespace Steamless.Unpacker.Variant31.x64
         /// <summary>
         /// Gets the name of this plugin.
         /// </summary>
-        public override string Name => "SteamStub Variant 3.1 Unpacker (x64)";
+        public override string Name => "SteamStub Variant 3.1.x Unpacker (x64)";
 
         /// <summary>
         /// Gets the description of this plugin.
         /// </summary>
-        public override string Description => "Unpacker for the 64bit SteamStub variant 3.1.";
+        public override string Description => "Unpacker for the 64bit SteamStub variant 3.1.x.";
 
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Internal wrapper to log a message.
@@ -112,6 +113,12 @@ namespace Steamless.Unpacker.Variant31.x64
                 var offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 48"); // 3.0
                 if (offset == 0)
                     offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 41"); // 3.1
+                if (offset == 0)
+                {
+                    offset = Pe64Helpers.FindPattern(bind, "48 C7 84 24 ?? ?? ?? ?? ?? ?? ?? ?? 48"); // 3.1.2
+                    if (offset > 0)
+                        offset += 5;
+                }
 
                 // Ensure a pattern was found..
                 if (offset == 0)

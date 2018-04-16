@@ -30,6 +30,7 @@ namespace ExamplePlugin
     using Steamless.API.Model;
     using Steamless.API.Services;
     using System;
+    using System.Reflection;
 
     [SteamlessApiVersion(1, 0)]
     public class Main : SteamlessPlugin
@@ -57,7 +58,7 @@ namespace ExamplePlugin
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Initialize function called when this plugin is first loaded.
