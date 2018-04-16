@@ -45,6 +45,12 @@ Steamless currently supports the following SteamStub DRM variants:
     * **Variant 3.0.1**
       * 32bit version of this variant is supported.
       * 64bit version of this variant is supported.
+    * **Variant 3.1.0**
+      * 32bit version of this variant is supported.
+      * 64bit version of this variant is supported.
+    * **Variant 3.1.2**
+      * 32bit version of this variant is supported.
+      * 64bit version of this variant is supported.
 
 *Please note; these version numbers are superficial. They are an assumed version based on major changes to the DRM over its lifespan.*
 
