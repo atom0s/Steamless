@@ -186,9 +186,9 @@ namespace Steamless.Unpacker.Variant20.x86
             if (BitConverter.ToUInt32(this.File.FileData, (int)fileOffset - 4) != 0xC0DEC0DE)
                 return false;
 
-            int structOffset;
-            int structSize;
-            int structXorKey;
+            uint structOffset;
+            uint structSize;
+            uint structXorKey;
 
             // Disassemble the file to locate the needed DRM information..
             if (!this.DisassembleFile(out structOffset, out structSize, out structXorKey))
@@ -200,7 +200,12 @@ namespace Steamless.Unpacker.Variant20.x86
 
             // Xor decode the header data..
             this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, (uint)structXorKey);
-            this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
+
+            // Determine how to handle the header based on the size..
+            if ((structSize / 4) == 0xD0)
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header_D0Variant>(headerData);
+            else
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
 
             return true;
         }
@@ -500,14 +505,14 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <param name="size"></param>
         /// <param name="xorKey"></param>
         /// <returns></returns>
-        private bool DisassembleFile(out int offset, out int size, out int xorKey)
+        private bool DisassembleFile(out uint offset, out uint size, out uint xorKey)
         {
             // Prepare our needed variables..
             Disassembler disasm = null;
             var dataPointer = IntPtr.Zero;
-            var structOffset = 0;
-            var structSize = 0;
-            var structXorKey = 0;
+            uint structOffset = 0;
+            uint structSize = 0;
+            uint structXorKey = 0;
 
             // Determine the entry offset of the file..
             var entryOffset = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
@@ -543,14 +548,14 @@ namespace Steamless.Unpacker.Variant20.x86
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_MEM && inst.Operands[1].Type == ud_type.UD_OP_IMM)
                     {
                         if (structOffset == 0)
-                            structOffset = inst.Operands[1].LvalSDWord - (int)this.File.NtHeaders.OptionalHeader.ImageBase;
+                            structOffset = (uint)(inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase);
                         else
-                            structXorKey = inst.Operands[1].LvalSDWord;
+                            structXorKey = (uint)inst.Operands[1].LvalUDWord;
                     }
 
                     // Looks for: mov reg, immediate
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_REG && inst.Operands[1].Type == ud_type.UD_OP_IMM)
-                        structSize = inst.Operands[1].LvalSDWord * 4;
+                        structSize = (uint)inst.Operands[1].LvalUDWord * 4;
                 }
 
                 offset = size = xorKey = 0;
@@ -611,7 +616,7 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <summary>
         /// Gets or sets the DRM stub header.
         /// </summary>
-        private SteamStub32Var20Header StubHeader { get; set; }
+        private dynamic StubHeader { get; set; }
 
         /// <summary>
         /// Gets or sets the payload data.

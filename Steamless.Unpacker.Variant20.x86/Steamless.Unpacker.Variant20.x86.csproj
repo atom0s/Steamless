@@ -23,7 +23,8 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SharpDisasm">
+    <Reference Include="SharpDisasm, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>.\SharpDisasm.dll</HintPath>
     </Reference>
     <Reference Include="System" />
