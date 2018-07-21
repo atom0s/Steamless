@@ -134,6 +134,7 @@ namespace Steamless.Unpacker.Variant20.x86
             this.PayloadData = null;
             this.SteamDrmpData = null;
             this.SteamDrmpOffsets = new List<int>();
+            this.UseFallbackDrmpOffsets = false;
             this.XorKey = 0;
 
             // Parse the file..
@@ -308,7 +309,15 @@ namespace Steamless.Unpacker.Variant20.x86
                 // Fall-back pattern scan for certain files that fail with the above pattern..
                 drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B");
                 if (drmpOffset == 0)
-                    return false;
+                {
+                    // Fall-back pattern (2).. (Seen in some v2 variants.)
+                    drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B");
+                    if (drmpOffset == 0)
+                        return false;
+
+                    // Use fallback offsets if this worked..
+                    this.UseFallbackDrmpOffsets = true;
+                }
             }
 
             // Copy the block of data from the SteamDRMP.dll data..
@@ -581,17 +590,25 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <returns></returns>
         private List<int> GetSteamDrmpOffsets(byte[] data)
         {
+            var offset0 = 2; // Flags
+            var offset1 = 14; // Steam App Id
+            var offset2 = this.UseFallbackDrmpOffsets ? 25 : 26; // OEP
+            var offset3 = this.UseFallbackDrmpOffsets ? 36 : 38; // Code Section Virtual Address
+            var offset4 = this.UseFallbackDrmpOffsets ? 47 : 50; // Code Section Virtual Size (Encrypted Size)
+            var offset5 = this.UseFallbackDrmpOffsets ? 61 : 62; // Code Section AES Key
+            var offset6 = this.UseFallbackDrmpOffsets ? 72 : 67; // Code Section AES Iv
+
             var offsets = new List<int>
                 {
-                    BitConverter.ToInt32(data, 2), // .... 0 - Flags
-                    BitConverter.ToInt32(data, 14), // ... 1 - Steam App Id
-                    BitConverter.ToInt32(data, 26), // ... 2 - OEP
-                    BitConverter.ToInt32(data, 38), // ... 3 - Code Section Virtual Address
-                    BitConverter.ToInt32(data, 50), // ... 4 - Code Section Virtual Size (Encrypted Size)
-                    BitConverter.ToInt32(data, 62) // .... 5 - Code Section AES Key
+                    BitConverter.ToInt32(data, offset0), // ... 0 - Flags
+                    BitConverter.ToInt32(data, offset1), // ... 1 - Steam App Id
+                    BitConverter.ToInt32(data, offset2), // ... 2 - OEP
+                    BitConverter.ToInt32(data, offset3), // ... 3 - Code Section Virtual Address
+                    BitConverter.ToInt32(data, offset4), // ... 4 - Code Section Virtual Size (Encrypted Size)
+                    BitConverter.ToInt32(data, offset5) // .... 5 - Code Section AES Key
                 };
 
-            var aesIvOffset = BitConverter.ToInt32(data, 67);
+            var aesIvOffset = BitConverter.ToInt32(data, offset6);
             offsets.Add(aesIvOffset); // ................. 6 - Code Section AES Iv
             offsets.Add(aesIvOffset + 16); // ............ 7 - Code Section Stolen Bytes
 
@@ -632,6 +649,11 @@ namespace Steamless.Unpacker.Variant20.x86
         /// Gets or sets the list of SteamDRMP.dll offsets.
         /// </summary>
         public List<int> SteamDrmpOffsets { get; set; }
+
+        /// <summary>
+        /// Gets or sets if the offsets should be read using fallback values.
+        /// </summary>
+        private bool UseFallbackDrmpOffsets { get; set; }
 
         /// <summary>
         /// Gets or sets the index of the code section.
