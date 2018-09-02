@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -31,10 +31,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
 [assembly: AssemblyProduct("Steamless.Unpacker.Variant31.x86")]
-[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2017")]
+[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 [assembly: Guid("0f2fae37-f898-4392-b4f6-711954beeb4f")]
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.2")]
+[assembly: AssemblyFileVersion("1.0.0.2")]

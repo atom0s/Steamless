@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -39,6 +39,7 @@ namespace Steamless.Unpacker.Variant20.x86
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Security.Cryptography;
 
@@ -68,7 +69,7 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Internal wrapper to log a message.
@@ -133,6 +134,7 @@ namespace Steamless.Unpacker.Variant20.x86
             this.PayloadData = null;
             this.SteamDrmpData = null;
             this.SteamDrmpOffsets = new List<int>();
+            this.UseFallbackDrmpOffsets = false;
             this.XorKey = 0;
 
             // Parse the file..
@@ -185,9 +187,9 @@ namespace Steamless.Unpacker.Variant20.x86
             if (BitConverter.ToUInt32(this.File.FileData, (int)fileOffset - 4) != 0xC0DEC0DE)
                 return false;
 
-            int structOffset;
-            int structSize;
-            int structXorKey;
+            uint structOffset;
+            uint structSize;
+            uint structXorKey;
 
             // Disassemble the file to locate the needed DRM information..
             if (!this.DisassembleFile(out structOffset, out structSize, out structXorKey))
@@ -199,7 +201,12 @@ namespace Steamless.Unpacker.Variant20.x86
 
             // Xor decode the header data..
             this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, (uint)structXorKey);
-            this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
+
+            // Determine how to handle the header based on the size..
+            if ((structSize / 4) == 0xD0)
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header_D0Variant>(headerData);
+            else
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
 
             return true;
         }
@@ -302,7 +309,15 @@ namespace Steamless.Unpacker.Variant20.x86
                 // Fall-back pattern scan for certain files that fail with the above pattern..
                 drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B");
                 if (drmpOffset == 0)
-                    return false;
+                {
+                    // Fall-back pattern (2).. (Seen in some v2 variants.)
+                    drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B");
+                    if (drmpOffset == 0)
+                        return false;
+
+                    // Use fallback offsets if this worked..
+                    this.UseFallbackDrmpOffsets = true;
+                }
             }
 
             // Copy the block of data from the SteamDRMP.dll data..
@@ -499,14 +514,14 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <param name="size"></param>
         /// <param name="xorKey"></param>
         /// <returns></returns>
-        private bool DisassembleFile(out int offset, out int size, out int xorKey)
+        private bool DisassembleFile(out uint offset, out uint size, out uint xorKey)
         {
             // Prepare our needed variables..
             Disassembler disasm = null;
             var dataPointer = IntPtr.Zero;
-            var structOffset = 0;
-            var structSize = 0;
-            var structXorKey = 0;
+            uint structOffset = 0;
+            uint structSize = 0;
+            uint structXorKey = 0;
 
             // Determine the entry offset of the file..
             var entryOffset = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
@@ -542,14 +557,14 @@ namespace Steamless.Unpacker.Variant20.x86
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_MEM && inst.Operands[1].Type == ud_type.UD_OP_IMM)
                     {
                         if (structOffset == 0)
-                            structOffset = inst.Operands[1].LvalSDWord - (int)this.File.NtHeaders.OptionalHeader.ImageBase;
+                            structOffset = (uint)(inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase);
                         else
-                            structXorKey = inst.Operands[1].LvalSDWord;
+                            structXorKey = (uint)inst.Operands[1].LvalUDWord;
                     }
 
                     // Looks for: mov reg, immediate
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_REG && inst.Operands[1].Type == ud_type.UD_OP_IMM)
-                        structSize = inst.Operands[1].LvalSDWord * 4;
+                        structSize = (uint)inst.Operands[1].LvalUDWord * 4;
                 }
 
                 offset = size = xorKey = 0;
@@ -575,17 +590,25 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <returns></returns>
         private List<int> GetSteamDrmpOffsets(byte[] data)
         {
+            var offset0 = 2; // Flags
+            var offset1 = 14; // Steam App Id
+            var offset2 = this.UseFallbackDrmpOffsets ? 25 : 26; // OEP
+            var offset3 = this.UseFallbackDrmpOffsets ? 36 : 38; // Code Section Virtual Address
+            var offset4 = this.UseFallbackDrmpOffsets ? 47 : 50; // Code Section Virtual Size (Encrypted Size)
+            var offset5 = this.UseFallbackDrmpOffsets ? 61 : 62; // Code Section AES Key
+            var offset6 = this.UseFallbackDrmpOffsets ? 72 : 67; // Code Section AES Iv
+
             var offsets = new List<int>
                 {
-                    BitConverter.ToInt32(data, 2), // .... 0 - Flags
-                    BitConverter.ToInt32(data, 14), // ... 1 - Steam App Id
-                    BitConverter.ToInt32(data, 26), // ... 2 - OEP
-                    BitConverter.ToInt32(data, 38), // ... 3 - Code Section Virtual Address
-                    BitConverter.ToInt32(data, 50), // ... 4 - Code Section Virtual Size (Encrypted Size)
-                    BitConverter.ToInt32(data, 62) // .... 5 - Code Section AES Key
+                    BitConverter.ToInt32(data, offset0), // ... 0 - Flags
+                    BitConverter.ToInt32(data, offset1), // ... 1 - Steam App Id
+                    BitConverter.ToInt32(data, offset2), // ... 2 - OEP
+                    BitConverter.ToInt32(data, offset3), // ... 3 - Code Section Virtual Address
+                    BitConverter.ToInt32(data, offset4), // ... 4 - Code Section Virtual Size (Encrypted Size)
+                    BitConverter.ToInt32(data, offset5) // .... 5 - Code Section AES Key
                 };
 
-            var aesIvOffset = BitConverter.ToInt32(data, 67);
+            var aesIvOffset = BitConverter.ToInt32(data, offset6);
             offsets.Add(aesIvOffset); // ................. 6 - Code Section AES Iv
             offsets.Add(aesIvOffset + 16); // ............ 7 - Code Section Stolen Bytes
 
@@ -610,7 +633,7 @@ namespace Steamless.Unpacker.Variant20.x86
         /// <summary>
         /// Gets or sets the DRM stub header.
         /// </summary>
-        private SteamStub32Var20Header StubHeader { get; set; }
+        private dynamic StubHeader { get; set; }
 
         /// <summary>
         /// Gets or sets the payload data.
@@ -626,6 +649,11 @@ namespace Steamless.Unpacker.Variant20.x86
         /// Gets or sets the list of SteamDRMP.dll offsets.
         /// </summary>
         public List<int> SteamDrmpOffsets { get; set; }
+
+        /// <summary>
+        /// Gets or sets if the offsets should be read using fallback values.
+        /// </summary>
+        private bool UseFallbackDrmpOffsets { get; set; }
 
         /// <summary>
         /// Gets or sets the index of the code section.

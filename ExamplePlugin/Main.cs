@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2017 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -30,6 +30,7 @@ namespace ExamplePlugin
     using Steamless.API.Model;
     using Steamless.API.Services;
     using System;
+    using System.Reflection;
 
     [SteamlessApiVersion(1, 0)]
     public class Main : SteamlessPlugin
@@ -57,7 +58,7 @@ namespace ExamplePlugin
         /// <summary>
         /// Gets the version of this plugin.
         /// </summary>
-        public override Version Version => new Version(1, 0, 0, 0);
+        public override Version Version => Assembly.GetExecutingAssembly().GetName().Version;
 
         /// <summary>
         /// Initialize function called when this plugin is first loaded.
