@@ -187,20 +187,16 @@ namespace Steamless.Unpacker.Variant20.x86
             if (BitConverter.ToUInt32(this.File.FileData, (int)fileOffset - 4) != 0xC0DEC0DE)
                 return false;
 
-            uint structOffset;
-            uint structSize;
-            uint structXorKey;
-
             // Disassemble the file to locate the needed DRM information..
-            if (!this.DisassembleFile(out structOffset, out structSize, out structXorKey))
+            if (!this.DisassembleFile(out var structOffset, out var structSize, out var structXorKey))
                 return false;
 
             // Obtain the DRM header data..
             var headerData = new byte[structSize];
-            Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva((uint)structOffset), headerData, 0, structSize);
+            Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(structOffset), headerData, 0, structSize);
 
             // Xor decode the header data..
-            this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, (uint)structXorKey);
+            this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, structXorKey);
 
             // Determine how to handle the header based on the size..
             if ((structSize / 4) == 0xD0)
@@ -557,14 +553,14 @@ namespace Steamless.Unpacker.Variant20.x86
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_MEM && inst.Operands[1].Type == ud_type.UD_OP_IMM)
                     {
                         if (structOffset == 0)
-                            structOffset = (uint)(inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase);
+                            structOffset = inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase;
                         else
-                            structXorKey = (uint)inst.Operands[1].LvalUDWord;
+                            structXorKey = inst.Operands[1].LvalUDWord;
                     }
 
                     // Looks for: mov reg, immediate
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_REG && inst.Operands[1].Type == ud_type.UD_OP_IMM)
-                        structSize = (uint)inst.Operands[1].LvalUDWord * 4;
+                        structSize = inst.Operands[1].LvalUDWord * 4;
                 }
 
                 offset = size = xorKey = 0;
@@ -643,7 +639,7 @@ namespace Steamless.Unpacker.Variant20.x86
                 var skipMov = false;
 
                 // Disassemble the incoming block of data to look for the needed offsets dynamically..
-                disasm = new Disassembler(data, ArchitectureMode.x86_32, 0);
+                disasm = new Disassembler(data, ArchitectureMode.x86_32);
                 foreach (var inst in disasm.Disassemble().Where(inst => !inst.Error))
                 {
                     if (count >= 8)

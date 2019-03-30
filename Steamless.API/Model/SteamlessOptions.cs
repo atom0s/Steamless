@@ -44,8 +44,8 @@ namespace Steamless.API.Model
         /// </summary>
         public bool VerboseOutput
         {
-            get { return this.Get<bool>("VerboseOutput"); }
-            set { this.Set("VerboseOutput", value); }
+            get => this.Get<bool>("VerboseOutput");
+            set => this.Set("VerboseOutput", value);
         }
 
         /// <summary>
@@ -53,8 +53,8 @@ namespace Steamless.API.Model
         /// </summary>
         public bool KeepBindSection
         {
-            get { return this.Get<bool>("KeepBindSection"); }
-            set { this.Set("KeepBindSection", value); }
+            get => this.Get<bool>("KeepBindSection");
+            set => this.Set("KeepBindSection", value);
         }
 
         /// <summary>
@@ -62,8 +62,8 @@ namespace Steamless.API.Model
         /// </summary>
         public bool DumpPayloadToDisk
         {
-            get { return this.Get<bool>("DumpPayloadToDisk"); }
-            set { this.Set("DumpPayloadToDisk", value); }
+            get => this.Get<bool>("DumpPayloadToDisk");
+            set => this.Set("DumpPayloadToDisk", value);
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace Steamless.API.Model
         /// </summary>
         public bool DumpSteamDrmpToDisk
         {
-            get { return this.Get<bool>("DumpSteamDrmpToDisk"); }
-            set { this.Set("DumpSteamDrmpToDisk", value); }
+            get => this.Get<bool>("DumpSteamDrmpToDisk");
+            set => this.Set("DumpSteamDrmpToDisk", value);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Steamless.API.Model
         /// </summary>
         public bool UseExperimentalFeatures
         {
-            get { return this.Get<bool>("UseExperimentalFeatures"); }
-            set { this.Set("UseExperimentalFeatures", value); }
+            get => this.Get<bool>("UseExperimentalFeatures");
+            set => this.Set("UseExperimentalFeatures", value);
         }
     }
 }

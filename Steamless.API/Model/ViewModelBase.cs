@@ -70,8 +70,8 @@ namespace Steamless.API.Model
         /// </summary>
         private EventHandlerList Events
         {
-            get { return this.Get<EventHandlerList>("Events"); }
-            set { this.Set("Events", value); }
+            get => this.Get<EventHandlerList>("Events");
+            set => this.Set("Events", value);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace Steamless.API.Model
         /// </summary>
         public event EventHandler<NavigatedEventArgs> NavigatedFrom
         {
-            add { this.Events.AddHandler("NavigatedFromEvent", value); }
-            remove { this.Events.RemoveHandler("NavigatedFromEvent", value); }
+            add => this.Events.AddHandler("NavigatedFromEvent", value);
+            remove => this.Events.RemoveHandler("NavigatedFromEvent", value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Steamless.API.Model
         /// </summary>
         public event EventHandler<NavigatedEventArgs> NavigatedTo
         {
-            add { this.Events.AddHandler("NavigatedToEvent", value); }
-            remove { this.Events.RemoveHandler("NavigatedToEvent", value); }
+            add => this.Events.AddHandler("NavigatedToEvent", value);
+            remove => this.Events.RemoveHandler("NavigatedToEvent", value);
         }
 
         /// <summary>

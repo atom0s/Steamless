@@ -53,8 +53,8 @@ namespace Steamless.Model.Tasks
         /// </summary>
         public bool Completed
         {
-            get { return this.Get<bool>("Completed"); }
-            set { this.Set("Completed", value); }
+            get => this.Get<bool>("Completed");
+            set => this.Set("Completed", value);
         }
 
         /// <summary>
@@ -62,8 +62,8 @@ namespace Steamless.Model.Tasks
         /// </summary>
         public double Progress
         {
-            get { return this.Get<double>("Progress"); }
-            set { this.Set("Progress", value); }
+            get => this.Get<double>("Progress");
+            set => this.Set("Progress", value);
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace Steamless.Model.Tasks
         /// </summary>
         public double ProgressTotal
         {
-            get { return this.Get<double>("ProgressTotal"); }
-            set { this.Set("ProgressTotal", value); }
+            get => this.Get<double>("ProgressTotal");
+            set => this.Set("ProgressTotal", value);
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace Steamless.Model.Tasks
         /// </summary>
         public string Text
         {
-            get { return this.Get<string>("Text"); }
-            set { this.Set("Text", value); }
+            get => this.Get<string>("Text");
+            set => this.Set("Text", value);
         }
     }
 }

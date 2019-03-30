@@ -51,8 +51,7 @@ namespace Steamless.Classes
 
         private static void OnGridViewColumnWidthFromItemsPropertyChanged(DependencyObject dpo, DependencyPropertyChangedEventArgs e)
         {
-            var lv = dpo as ListView;
-            if (lv != null)
+            if (dpo is ListView lv)
             {
                 if ((bool)e.NewValue)
                     lv.Loaded += OnListViewLoaded;

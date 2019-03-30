@@ -123,17 +123,6 @@ namespace Steamless.ViewModel
         }
 
         /// <summary>
-        /// Sets the applications current status.
-        /// </summary>
-        /// <param name="state"></param>
-        /// <param name="msg"></param>
-        public void SetApplicationStatus(ApplicationState state, string msg)
-        {
-            this.State = state;
-            this.CurrentTask = new StatusTask(msg);
-        }
-
-        /// <summary>
         /// Thread callback to process application tasks.
         /// </summary>
         private async void ProcessTasksThread()
