@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2019 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -325,7 +325,7 @@ namespace Steamless.Unpacker.Variant20.x86
             Array.Copy(this.SteamDrmpData, drmpOffset, drmpOffsetData, 0, 1024);
 
             // Obtain the offsets from the file data..
-            var drmpOffsets = this.GetSteamDrmpOffsets(drmpOffsetData);
+            var drmpOffsets = (this.Options.UseExperimentalFeatures) ? this.GetSteamDrmpOffsetsDynamic(drmpOffsetData) : this.GetSteamDrmpOffsets(drmpOffsetData);
             if (drmpOffsets.Count != 8)
                 return false;
 
@@ -613,6 +613,97 @@ namespace Steamless.Unpacker.Variant20.x86
             offsets.Add(aesIvOffset + 16); // ............ 7 - Code Section Stolen Bytes
 
             return offsets;
+        }
+
+        /// <summary>
+        /// Obtains the needed DRM offsets from the SteamDRMP.dll file. (Dynamically via disassembling.)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private List<int> GetSteamDrmpOffsetsDynamic(byte[] data)
+        {
+            Disassembler disasm = null;
+            var offsets = new List<int>();
+            var count = 0;
+
+            /**
+             * Assumed order of the offset values:
+             * - Flags (mov)
+             * - SteamAppId (mov)
+             * - OEP (mov)
+             * - Code Section VA (mov)
+             * - Code Section Size (mov)
+             * - Code Section AES Key (lea)
+             * - Code Section AES IV (offset from above lea)
+             * - Stolen Bytes (add)
+             */
+
+            try
+            {
+                var skipMov = false;
+
+                // Disassemble the incoming block of data to look for the needed offsets dynamically..
+                disasm = new Disassembler(data, ArchitectureMode.x86_32, 0);
+                foreach (var inst in disasm.Disassemble().Where(inst => !inst.Error))
+                {
+                    if (count >= 8)
+                        break;
+
+                    // ex: mov eax, [eax+1234]
+                    if (!skipMov && inst.Mnemonic == ud_mnemonic_code.UD_Imov)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_MEM)
+                        {
+                            count++;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                        }
+                    }
+
+                    // ex: lea eax, [eax+1234]
+                    if (inst.Mnemonic == ud_mnemonic_code.UD_Ilea)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_MEM)
+                        {
+                            count += 2;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                            offsets.Add(inst.Operands[1].LvalSDWord + 16);
+
+                            /**
+                             * Some v2 compiled files have the order of the last offset (add inst) after a mov which loads
+                             * GetModuleHandleA's address into a register. In order to skip that from being read as an offset
+                             * we need this small workaround..
+                             */
+                            skipMov = true;
+                        }
+                    }
+
+                    // ex: add eax, 1234
+                    if (inst.Mnemonic == ud_mnemonic_code.UD_Iadd)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_IMM)
+                        {
+                            count++;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                        }
+                    }
+                }
+
+                return offsets;
+            }
+            catch
+            {
+                return new List<int>();
+            }
+            finally
+            {
+                disasm?.Dispose();
+            }
         }
 
         /// <summary>
