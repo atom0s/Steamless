@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2019 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -187,20 +187,16 @@ namespace Steamless.Unpacker.Variant20.x86
             if (BitConverter.ToUInt32(this.File.FileData, (int)fileOffset - 4) != 0xC0DEC0DE)
                 return false;
 
-            uint structOffset;
-            uint structSize;
-            uint structXorKey;
-
             // Disassemble the file to locate the needed DRM information..
-            if (!this.DisassembleFile(out structOffset, out structSize, out structXorKey))
+            if (!this.DisassembleFile(out var structOffset, out var structSize, out var structXorKey))
                 return false;
 
             // Obtain the DRM header data..
             var headerData = new byte[structSize];
-            Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva((uint)structOffset), headerData, 0, structSize);
+            Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(structOffset), headerData, 0, structSize);
 
             // Xor decode the header data..
-            this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, (uint)structXorKey);
+            this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, structXorKey);
 
             // Determine how to handle the header based on the size..
             if ((structSize / 4) == 0xD0)
@@ -325,7 +321,7 @@ namespace Steamless.Unpacker.Variant20.x86
             Array.Copy(this.SteamDrmpData, drmpOffset, drmpOffsetData, 0, 1024);
 
             // Obtain the offsets from the file data..
-            var drmpOffsets = this.GetSteamDrmpOffsets(drmpOffsetData);
+            var drmpOffsets = (this.Options.UseExperimentalFeatures) ? this.GetSteamDrmpOffsetsDynamic(drmpOffsetData) : this.GetSteamDrmpOffsets(drmpOffsetData);
             if (drmpOffsets.Count != 8)
                 return false;
 
@@ -557,14 +553,14 @@ namespace Steamless.Unpacker.Variant20.x86
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_MEM && inst.Operands[1].Type == ud_type.UD_OP_IMM)
                     {
                         if (structOffset == 0)
-                            structOffset = (uint)(inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase);
+                            structOffset = inst.Operands[1].LvalUDWord - this.File.NtHeaders.OptionalHeader.ImageBase;
                         else
-                            structXorKey = (uint)inst.Operands[1].LvalUDWord;
+                            structXorKey = inst.Operands[1].LvalUDWord;
                     }
 
                     // Looks for: mov reg, immediate
                     if (inst.Mnemonic == ud_mnemonic_code.UD_Imov && inst.Operands[0].Type == ud_type.UD_OP_REG && inst.Operands[1].Type == ud_type.UD_OP_IMM)
-                        structSize = (uint)inst.Operands[1].LvalUDWord * 4;
+                        structSize = inst.Operands[1].LvalUDWord * 4;
                 }
 
                 offset = size = xorKey = 0;
@@ -613,6 +609,97 @@ namespace Steamless.Unpacker.Variant20.x86
             offsets.Add(aesIvOffset + 16); // ............ 7 - Code Section Stolen Bytes
 
             return offsets;
+        }
+
+        /// <summary>
+        /// Obtains the needed DRM offsets from the SteamDRMP.dll file. (Dynamically via disassembling.)
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        private List<int> GetSteamDrmpOffsetsDynamic(byte[] data)
+        {
+            Disassembler disasm = null;
+            var offsets = new List<int>();
+            var count = 0;
+
+            /**
+             * Assumed order of the offset values:
+             * - Flags (mov)
+             * - SteamAppId (mov)
+             * - OEP (mov)
+             * - Code Section VA (mov)
+             * - Code Section Size (mov)
+             * - Code Section AES Key (lea)
+             * - Code Section AES IV (offset from above lea)
+             * - Stolen Bytes (add)
+             */
+
+            try
+            {
+                var skipMov = false;
+
+                // Disassemble the incoming block of data to look for the needed offsets dynamically..
+                disasm = new Disassembler(data, ArchitectureMode.x86_32);
+                foreach (var inst in disasm.Disassemble().Where(inst => !inst.Error))
+                {
+                    if (count >= 8)
+                        break;
+
+                    // ex: mov eax, [eax+1234]
+                    if (!skipMov && inst.Mnemonic == ud_mnemonic_code.UD_Imov)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_MEM)
+                        {
+                            count++;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                        }
+                    }
+
+                    // ex: lea eax, [eax+1234]
+                    if (inst.Mnemonic == ud_mnemonic_code.UD_Ilea)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_MEM)
+                        {
+                            count += 2;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                            offsets.Add(inst.Operands[1].LvalSDWord + 16);
+
+                            /**
+                             * Some v2 compiled files have the order of the last offset (add inst) after a mov which loads
+                             * GetModuleHandleA's address into a register. In order to skip that from being read as an offset
+                             * we need this small workaround..
+                             */
+                            skipMov = true;
+                        }
+                    }
+
+                    // ex: add eax, 1234
+                    if (inst.Mnemonic == ud_mnemonic_code.UD_Iadd)
+                    {
+                        if (inst.Operands.Length >= 2
+                            && inst.Operands[0].Type == ud_type.UD_OP_REG
+                            && inst.Operands[1].Type == ud_type.UD_OP_IMM)
+                        {
+                            count++;
+                            offsets.Add(inst.Operands[1].LvalSDWord);
+                        }
+                    }
+                }
+
+                return offsets;
+            }
+            catch
+            {
+                return new List<int>();
+            }
+            finally
+            {
+                disasm?.Dispose();
+            }
         }
 
         /// <summary>
