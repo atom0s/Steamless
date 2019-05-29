@@ -148,7 +148,7 @@ namespace Steamless.API.PE64
                 var count = 0;
                 while (true)
                 {
-                    var callback = BitConverter.ToUInt64(this.FileData, (int)addr + (count * 4));
+                    var callback = BitConverter.ToUInt64(this.FileData, (int)addr + (count * 8));
                     if (callback == 0)
                         break;
 
