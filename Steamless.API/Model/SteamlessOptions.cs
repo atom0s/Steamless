@@ -37,6 +37,8 @@ namespace Steamless.API.Model
             this.DumpPayloadToDisk = false;
             this.DumpSteamDrmpToDisk = false;
             this.UseExperimentalFeatures = false;
+            this.CleanDosStub = true;
+            this.RepairCrcChecksum = true;
         }
 
         /// <summary>
@@ -82,6 +84,24 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("UseExperimentalFeatures");
             set => this.Set("UseExperimentalFeatures", value);
+        }
+
+        /// <summary>
+        /// Gets or sets the clean DOS stub option value.
+        /// </summary>
+        public bool CleanDosStub
+        {
+            get => this.Get<bool>("CleanDosStub");
+            set => this.Set("CleanDosStub", value);
+        }
+
+        /// <summary>
+        /// Gets or sets the repair crc checksum option value.
+        /// </summary>
+        public bool RepairCrcChecksum
+        {
+            get => this.Get<bool>("RepairCrcChecksum");
+            set => this.Set("RepairCrcChecksum", value);
         }
     }
 }
