@@ -191,7 +191,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #1
-        /// 
+        ///
         /// Read, decode and validate the SteamStub DRM header.
         /// </summary>
         /// <returns></returns>
@@ -239,7 +239,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #2
-        /// 
+        ///
         /// Read, decode and process the payload data.
         /// </summary>
         /// <returns></returns>
@@ -278,7 +278,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #3
-        /// 
+        ///
         /// Read, decode and dump the SteamDRMP.dll file.
         /// </summary>
         /// <returns></returns>
@@ -328,7 +328,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #4
-        /// 
+        ///
         /// Remove the bind section if requested.
         /// Find the code section.
         /// </summary>
@@ -373,7 +373,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #5
-        /// 
+        ///
         /// Read, decrypt and process the code section.
         /// </summary>
         /// <returns></returns>
@@ -421,7 +421,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
         /// <summary>
         /// Step #6
-        /// 
+        ///
         /// Rebuild and save the unpacked file.
         /// </summary>
         /// <returns></returns>
@@ -441,9 +441,23 @@ namespace Steamless.Unpacker.Variant30.x64
                 // Write the DOS header to the file..
                 fStream.WriteBytes(Pe64Helpers.GetStructureBytes(this.File.DosHeader));
 
+                var dosHeaderSize = fStream.Position;
+
                 // Write the DOS stub to the file..
                 if (this.File.DosStubSize > 0)
+                {
+                    if (this.Options.CleanDosStub)
+                    {
+                        byte[] cleanDosStub = new byte[] { 0x0E, 0x1F, 0xBA, 0x0E, 0x00, 0xB4, 0x09, 0xCD, 0x21, 0xB8, 0x01, 0x4C, 0xCD, 0x21, 0x54, 0x68, 0x69, 0x73, 0x20, 0x70, 0x72, 0x6F, 0x67, 0x72, 0x61, 0x6D, 0x20, 0x63, 0x61, 0x6E, 0x6E, 0x6F, 0x74, 0x20, 0x62, 0x65, 0x20, 0x72, 0x75, 0x6E, 0x20, 0x69, 0x6E, 0x20, 0x44, 0x4F, 0x53, 0x20, 0x6D, 0x6F, 0x64, 0x65, 0x2E, 0x0D, 0x0D, 0x0A, 0x24 };
+                        this.Log(" --> cleaning DOS stub.", LogMessageType.Debug);
+                        this.File.DosStubData = new byte[this.File.DosStubSize];
+                        Array.Copy(cleanDosStub, this.File.DosStubData, cleanDosStub.Length);
+                    }
+                    else
+                        this.Log(" --> retaining DOS stub.", LogMessageType.Debug);
+
                     fStream.WriteBytes(this.File.DosStubData);
+                }
 
                 // Update the entry point of the file..
                 var ntHeaders = this.File.NtHeaders;
@@ -483,6 +497,30 @@ namespace Steamless.Unpacker.Variant30.x64
                 // Write the overlay data if it exists..
                 if (this.File.OverlayData != null)
                     fStream.WriteBytes(this.File.OverlayData);
+
+                // Repair CRC checksum if not zero
+                if (this.Options.RepairCrcChecksum)
+                {
+                    uint newChecksum = 0;
+
+                    ntHeaders = this.File.NtHeaders;
+                    fStream.Position = dosHeaderSize + (long)this.File.DosStubSize;
+
+                    this.Log($" --> current CRC checksum is {ntHeaders.OptionalHeader.CheckSum}.", LogMessageType.Debug);
+
+                    var checksumResult = CheckSumHelper.MapFileAndCheckSum(fStream.Name, out ntHeaders.OptionalHeader.CheckSum, out newChecksum);
+
+                    if ((CheckSumHelper.CheckSum_Result)checksumResult == CheckSumHelper.CheckSum_Result.CHECKSUM_SUCCESS)
+                        ntHeaders.OptionalHeader.CheckSum = newChecksum;
+                    else
+                        ntHeaders.OptionalHeader.CheckSum = 0;
+
+                    this.File.NtHeaders = ntHeaders;
+
+                    fStream.WriteBytes(Pe64Helpers.GetStructureBytes(ntHeaders));
+
+                    this.Log($" --> repaired CRC checksum is {newChecksum}.", LogMessageType.Debug);
+                }
 
                 this.Log(" --> Unpacked file saved to disk!", LogMessageType.Success);
                 this.Log($" --> File Saved As: {unpackedPath}", LogMessageType.Success);
