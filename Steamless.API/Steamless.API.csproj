@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Crypto\AesHelper.cs" />
+    <Compile Include="Crypto\CheckSumHelper.cs" />
     <Compile Include="Extensions\FileStreamExtensions.cs" />
     <Compile Include="Model\NavigatedEventArgs.cs" />
     <Compile Include="Model\NotifiableModel.cs" />
