@@ -37,8 +37,8 @@ namespace Steamless.API.Model
             this.DumpPayloadToDisk = false;
             this.DumpSteamDrmpToDisk = false;
             this.UseExperimentalFeatures = false;
-            this.CleanDosStub = true;
-            this.RepairCrcChecksum = true;
+            this.CleanDosStub = false;
+            this.RepairCrcChecksum = false;
         }
 
         /// <summary>
