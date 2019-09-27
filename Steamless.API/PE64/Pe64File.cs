@@ -312,10 +312,10 @@ namespace Steamless.API.PE64
             {
                 // Obtain the current section and realign the data..
                 var section = this.Sections[x];
-                section.VirtualAddress = (uint)this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
+                /*section.VirtualAddress = (uint)this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
                 section.VirtualSize = (uint)this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
                 section.PointerToRawData = (uint)this.GetAlignment(section.PointerToRawData, this.NtHeaders.OptionalHeader.FileAlignment);
-                section.SizeOfRawData = (uint)this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);
+                section.SizeOfRawData = (uint)this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);*/
 
                 // Determine if this Section (aligned) is the biggest..
                 if ((uint)this.GetAlignment(section.VirtualAddress + section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment) > biggestSectionSize)
