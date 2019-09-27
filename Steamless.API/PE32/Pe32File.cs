@@ -307,14 +307,19 @@ namespace Steamless.API.PE32
         /// </summary>
         public void RebuildSections()
         {
+            uint biggestSectionSize = 0;
             for (var x = 0; x < this.Sections.Count; x++)
             {
                 // Obtain the current section and realign the data..
                 var section = this.Sections[x];
-                section.VirtualAddress = this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
+                /*section.VirtualAddress = this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
                 section.VirtualSize = this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
                 section.PointerToRawData = this.GetAlignment(section.PointerToRawData, this.NtHeaders.OptionalHeader.FileAlignment);
-                section.SizeOfRawData = this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);
+                section.SizeOfRawData = this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);*/
+                
+                // Determine if this Section (aligned) is the biggest..
+                if ((uint)this.GetAlignment(section.VirtualAddress + section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment) > biggestSectionSize)
+                    biggestSectionSize = (uint)this.GetAlignment(section.VirtualAddress + section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
 
                 // Store the sections updates..
                 this.Sections[x] = section;
@@ -322,7 +327,7 @@ namespace Steamless.API.PE32
 
             // Update the size of the image..
             var ntHeaders = this.NtHeaders;
-            ntHeaders.OptionalHeader.SizeOfImage = this.GetAlignment(this.Sections.Last().VirtualAddress + this.Sections.Last().VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
+            ntHeaders.OptionalHeader.SizeOfImage = biggestSectionSize;
             this.NtHeaders = ntHeaders;
         }
 
