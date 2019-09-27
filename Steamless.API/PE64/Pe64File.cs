@@ -307,30 +307,21 @@ namespace Steamless.API.PE64
         /// </summary>
         public void RebuildSections()
         {
-            uint biggestSectionSize = 0;
-            for (var x = 0; x < this.Sections.Count; x++)
-            {
-                // Obtain the current section and realign the data..
-                var section = this.Sections[x];
-                /*section.VirtualAddress = (uint)this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
-                section.VirtualSize = (uint)this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
-                section.PointerToRawData = (uint)this.GetAlignment(section.PointerToRawData, this.NtHeaders.OptionalHeader.FileAlignment);
-                section.SizeOfRawData = (uint)this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);*/
+            uint sizeOfImage = 0;
 
-                // Determine if this Section (aligned) is the biggest..
-                if ((uint)this.GetAlignment(section.VirtualAddress + section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment) > biggestSectionSize)
-                    biggestSectionSize = (uint)this.GetAlignment(section.VirtualAddress + section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
+            // Add sizes of Dos Stub and Optional Header..
+            sizeOfImage += (uint)this.DosStubSize;
+            sizeOfImage += this.NtHeaders.FileHeader.SizeOfOptionalHeader;
 
-                // Store the sections updates..
-                this.Sections[x] = section;
-            }
+            // Add sizes of Sections aligned but do not align..
+            foreach (var section in this.Sections)
+                sizeOfImage += (uint)this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
 
             // Update the size of the image..
             var ntHeaders = this.NtHeaders;
-            ntHeaders.OptionalHeader.SizeOfImage = biggestSectionSize;
+            ntHeaders.OptionalHeader.SizeOfImage = (uint)this.GetAlignment(sizeOfImage, this.NtHeaders.OptionalHeader.SectionAlignment);
             this.NtHeaders = ntHeaders;
         }
-
         /// <summary>
         /// Obtains the relative virtual address from the given virtual address.
         /// </summary>
