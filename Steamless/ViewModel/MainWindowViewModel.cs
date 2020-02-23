@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2019 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -80,8 +80,7 @@ namespace Steamless.ViewModel
             this.OnShowAboutViewCommand = new RelayCommand(() => this.ShowAboutView = !this.ShowAboutView);
             this.OnOpenHyperlinkCommand = new RelayCommand<object>(o =>
             {
-                var link = o as Hyperlink;
-                if (link != null)
+                if (o is Hyperlink link)
                     Process.Start(link.NavigateUri.AbsoluteUri);
             });
             this.OnDragDropCommand = new RelayCommand<DragEventArgs>(this.InputFileDragDrop);
@@ -94,7 +93,7 @@ namespace Steamless.ViewModel
             logService.AddLogMessage += this.AddLogMessage;
             logService.ClearLogMessages += this.ClearLogMessages;
 
-            this.AddLogMessage(this, new LogMessageEventArgs("Steamless (c) 2015 - 2018 atom0s [atom0s@live.com]", LogMessageType.Debug));
+            this.AddLogMessage(this, new LogMessageEventArgs("Steamless (c) 2015 - 2019 atom0s [atom0s@live.com]", LogMessageType.Debug));
             this.AddLogMessage(this, new LogMessageEventArgs("Website: http://atom0s.com/", LogMessageType.Debug));
 
             // Initialize this model..
@@ -124,17 +123,6 @@ namespace Steamless.ViewModel
         }
 
         /// <summary>
-        /// Sets the applications current status.
-        /// </summary>
-        /// <param name="state"></param>
-        /// <param name="msg"></param>
-        public void SetApplicationStatus(ApplicationState state, string msg)
-        {
-            this.State = state;
-            this.CurrentTask = new StatusTask(msg);
-        }
-
-        /// <summary>
         /// Thread callback to process application tasks.
         /// </summary>
         private async void ProcessTasksThread()
@@ -142,8 +130,7 @@ namespace Steamless.ViewModel
             while (Interlocked.CompareExchange(ref this.m_TaskThread, null, null) != null && this.State != ApplicationState.Closing)
             {
                 // Obtain a task from the task list..
-                BaseTask task;
-                if (this.Tasks.TryTake(out task))
+                if (this.Tasks.TryTake(out var task))
                 {
                     this.CurrentTask = task;
                     await this.CurrentTask.StartTask();
@@ -232,7 +219,8 @@ namespace Steamless.ViewModel
         private static void WindowMinimize()
         {
             // Minimize the window..
-            Application.Current.MainWindow.WindowState = WindowState.Minimized;
+            if (Application.Current.MainWindow != null)
+                Application.Current.MainWindow.WindowState = WindowState.Minimized;
         }
 
         /// <summary>
@@ -241,7 +229,8 @@ namespace Steamless.ViewModel
         /// <param name="args"></param>
         private static void WindowMouseDown(MouseButtonEventArgs args)
         {
-            Application.Current.MainWindow.DragMove();
+            if (Application.Current.MainWindow != null)
+                Application.Current.MainWindow.DragMove();
         }
 
         /// <summary>
@@ -401,8 +390,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public ApplicationState State
         {
-            get { return this.Get<ApplicationState>("State"); }
-            set { this.Set("State", value); }
+            get => this.Get<ApplicationState>("State");
+            set => this.Set("State", value);
         }
 
         /// <summary>
@@ -410,8 +399,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public Version SteamlessVersion
         {
-            get { return this.Get<Version>("SteamlessVersion"); }
-            set { this.Set("SteamlessVersion", value); }
+            get => this.Get<Version>("SteamlessVersion");
+            set => this.Set("SteamlessVersion", value);
         }
 
         /// <summary>
@@ -419,8 +408,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public BaseTask CurrentTask
         {
-            get { return this.Get<BaseTask>("CurrentTask"); }
-            set { this.Set("CurrentTask", value); }
+            get => this.Get<BaseTask>("CurrentTask");
+            set => this.Set("CurrentTask", value);
         }
 
         /// <summary>
@@ -428,8 +417,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public ConcurrentBag<BaseTask> Tasks
         {
-            get { return this.Get<ConcurrentBag<BaseTask>>("Tasks"); }
-            set { this.Set("Tasks", value); }
+            get => this.Get<ConcurrentBag<BaseTask>>("Tasks");
+            set => this.Set("Tasks", value);
         }
 
         /// <summary>
@@ -437,8 +426,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public bool ShowAboutView
         {
-            get { return this.Get<bool>("ShowAboutView"); }
-            set { this.Set("ShowAboutView", value); }
+            get => this.Get<bool>("ShowAboutView");
+            set => this.Set("ShowAboutView", value);
         }
         #endregion
 
@@ -448,8 +437,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public ObservableCollection<SteamlessPlugin> Plugins
         {
-            get { return this.Get<ObservableCollection<SteamlessPlugin>>("Plugins"); }
-            set { this.Set("Plugins", value); }
+            get => this.Get<ObservableCollection<SteamlessPlugin>>("Plugins");
+            set => this.Set("Plugins", value);
         }
 
         /// <summary>
@@ -457,8 +446,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public int SelectedPluginIndex
         {
-            get { return this.Get<int>("SelectedPluginIndex"); }
-            set { this.Set("SelectedPluginIndex", value); }
+            get => this.Get<int>("SelectedPluginIndex");
+            set => this.Set("SelectedPluginIndex", value);
         }
 
         /// <summary>
@@ -466,8 +455,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public string InputFilePath
         {
-            get { return this.Get<string>("InputFilePath"); }
-            set { this.Set("InputFilePath", value); }
+            get => this.Get<string>("InputFilePath");
+            set => this.Set("InputFilePath", value);
         }
 
         /// <summary>
@@ -475,8 +464,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public SteamlessOptions Options
         {
-            get { return this.Get<SteamlessOptions>("Options"); }
-            set { this.Set("Options", value); }
+            get => this.Get<SteamlessOptions>("Options");
+            set => this.Set("Options", value);
         }
 
         /// <summary>
@@ -484,8 +473,8 @@ namespace Steamless.ViewModel
         /// </summary>
         public ObservableCollection<LogMessageEventArgs> Log
         {
-            get { return this.Get<ObservableCollection<LogMessageEventArgs>>("Log"); }
-            set { this.Set("Log", value); }
+            get => this.Get<ObservableCollection<LogMessageEventArgs>>("Log");
+            set => this.Set("Log", value);
         }
         #endregion
     }

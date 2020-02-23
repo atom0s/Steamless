@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2018 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2019 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -70,8 +70,8 @@ namespace Steamless.API.Model
         /// </summary>
         private EventHandlerList Events
         {
-            get { return this.Get<EventHandlerList>("Events"); }
-            set { this.Set("Events", value); }
+            get => this.Get<EventHandlerList>("Events");
+            set => this.Set("Events", value);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace Steamless.API.Model
         /// </summary>
         public event EventHandler<NavigatedEventArgs> NavigatedFrom
         {
-            add { this.Events.AddHandler("NavigatedFromEvent", value); }
-            remove { this.Events.RemoveHandler("NavigatedFromEvent", value); }
+            add => this.Events.AddHandler("NavigatedFromEvent", value);
+            remove => this.Events.RemoveHandler("NavigatedFromEvent", value);
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace Steamless.API.Model
         /// </summary>
         public event EventHandler<NavigatedEventArgs> NavigatedTo
         {
-            add { this.Events.AddHandler("NavigatedToEvent", value); }
-            remove { this.Events.RemoveHandler("NavigatedToEvent", value); }
+            add => this.Events.AddHandler("NavigatedToEvent", value);
+            remove => this.Events.RemoveHandler("NavigatedToEvent", value);
         }
 
         /// <summary>
