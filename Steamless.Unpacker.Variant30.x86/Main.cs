@@ -137,8 +137,9 @@ namespace Steamless.Unpacker.Variant30.x86
                 var headerSize = this.GetHeaderSize(f);
                 return headerSize == 0xB0 || headerSize == 0xD0;
             }
-            catch
+            catch (Exception e)
             {
+                this.Log(e.ToString(), LogMessageType.Warning);
                 return false;
             }
         }

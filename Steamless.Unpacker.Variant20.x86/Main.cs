@@ -113,8 +113,9 @@ namespace Steamless.Unpacker.Variant20.x86
                 // Attempt to locate the known v2.x signature..
                 return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 C7") > 0;
             }
-            catch
+            catch (Exception e)
             {
+                this.Log(e.ToString(), LogMessageType.Warning);
                 return false;
             }
         }

@@ -136,8 +136,9 @@ namespace Steamless.Unpacker.Variant31.x86
 
                 return headerSize == 0xF0;
             }
-            catch
+            catch (Exception e)
             {
+                this.Log(e.ToString(), LogMessageType.Warning);
                 return false;
             }
         }

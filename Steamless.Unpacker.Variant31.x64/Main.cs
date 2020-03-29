@@ -130,8 +130,9 @@ namespace Steamless.Unpacker.Variant31.x64
                 // Check for the known 3.1 header size..
                 return headerSize == 0xF0;
             }
-            catch
+            catch (Exception e)
             {
+                this.Log(e.ToString(), LogMessageType.Warning);
                 return false;
             }
         }
