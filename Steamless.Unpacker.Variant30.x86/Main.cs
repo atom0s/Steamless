@@ -130,8 +130,21 @@ namespace Steamless.Unpacker.Variant30.x86
             {
                 // Load the file..
                 var f = new Pe32File(file);
-                if (!f.Parse() || f.IsFile64Bit() || !f.HasSection(".bind"))
+                if (!f.Parse())
+                {
+                    this.Log("Failed to parse PE", LogMessageType.Information);
                     return false;
+                }
+                if (f.IsFile64Bit())
+                {
+                    this.Log("Is not 32bit", LogMessageType.Information);
+                    return false;
+                }
+                if (!f.HasSection(".bind"))
+                {
+                    this.Log("No bind section", LogMessageType.Information);
+                    return false;
+                }
 
                 // Check for the known 3.0 header sizes..
                 var headerSize = this.GetHeaderSize(f);

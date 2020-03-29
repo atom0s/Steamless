@@ -125,8 +125,20 @@ namespace Steamless.Unpacker.Variant30.x64
             {
                 // Load the file..
                 var f = new Pe64File(file);
-                if (!f.Parse() || !f.IsFile64Bit() || !f.HasSection(".bind"))
+                if (!f.Parse())
+                {
+                    this.Log("Can't parse as PE64", LogMessageType.Warning);
                     return false;
+                }
+                if (!f.IsFile64Bit()) {
+                    this.Log("Is not 64bit", LogMessageType.Warning);
+                    return false;
+                }
+                if (!f.HasSection(".bind"))
+                {
+                    this.Log("Missing bind section", LogMessageType.Warning);
+                    return false;
+                }
 
                 // Check for the known 3.0 header sizes..
                 var headerSize = this.GetHeaderSize(f);

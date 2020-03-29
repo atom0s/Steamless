@@ -104,12 +104,22 @@ namespace Steamless.Unpacker.Variant20.x86
             {
                 // Load the file..
                 var f = new Pe32File(file);
-                if (!f.Parse() || f.IsFile64Bit() || !f.HasSection(".bind"))
+                if (!f.Parse()) {
+                    this.Log("Failed to parse PE", LogMessageType.Information);
                     return false;
+                }
+                if (f.IsFile64Bit()) {
+                    this.Log("Is not 32bit", LogMessageType.Information);
+                    return false;
+                }
+                if (!f.HasSection(".bind"))
+                {
+                    this.Log("No bind section", LogMessageType.Information);
+                    return false;
+                }
 
                 // Obtain the bind section data..
                 var bind = f.GetSectionData(".bind");
-
                 // Attempt to locate the known v2.x signature..
                 return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 C7") > 0;
             }
