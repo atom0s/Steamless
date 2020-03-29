@@ -39,9 +39,7 @@
   <ItemGroup>
     <Compile Include="Crypto\AesHelper.cs" />
     <Compile Include="Extensions\FileStreamExtensions.cs" />
-    <Compile Include="Model\NavigatedEventArgs.cs" />
     <Compile Include="Model\NotifiableModel.cs" />
-    <Compile Include="Model\ViewModelBase.cs" />
     <Compile Include="PE32\NativeApi32.cs" />
     <Compile Include="PE32\Pe32File.cs" />
     <Compile Include="PE32\Pe32Helpers.cs" />
