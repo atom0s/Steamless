@@ -90,6 +90,14 @@ To compile, you should only need to load the sln file and compile as-is.
 
 No changes should be needed to the solution or source.
 
+# Compiling for Linux
+
+Run `msbuild Steamless-linux.sln`, and then e. g.
+`mono ./Steamless/bin/x86/Debug/Steamless.CLI.exe path/to/executable.exe`.
+
+Note: This only builds a command line version of the application for Linux, it
+isn't compatible with ELF binaries, only Windows PE.
+
 # Contributing To Steamless (Guidelines)
 
 I welcome and encourage contributions to the Steamless project. However, I do have some guidelines I wish for people to follow when doing so.
