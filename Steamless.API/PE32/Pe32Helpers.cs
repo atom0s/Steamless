@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2019 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -41,8 +41,9 @@ namespace Steamless.API.PE32
         /// <returns></returns>
         public static T GetStructure<T>(byte[] data, int offset = 0)
         {
-            var ptr = Marshal.AllocHGlobal(data.Length);
-            Marshal.Copy(data, offset, ptr, data.Length - offset);
+            var size = Marshal.SizeOf(typeof(T));
+            var ptr = Marshal.AllocHGlobal(size);
+            Marshal.Copy(data, offset, ptr, size);
             var obj = (T)Marshal.PtrToStructure(ptr, typeof(T));
             Marshal.FreeHGlobal(ptr);
 
