@@ -98,7 +98,7 @@ I welcome and encourage contributions to the Steamless project. However, I do ha
   * Please do not use tabs. Tabs should be 4 spaces instead.  
   * Please do not introduce additional dependencies without a discussion before hand.
   * Please do not alter or remove any copyrights without a discussion prior.
-  * Please do not hard code information specific to any one target. Steamless should be dynamic full all titles.
+  * Please do not hard code information specific to any one target. Steamless should be dynamic for all titles.
 
 Discussions can be opened within the Issue tracker here:
   * https://github.com/atom0s/Steamless/issues
