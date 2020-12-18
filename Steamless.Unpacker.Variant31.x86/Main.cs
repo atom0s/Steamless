@@ -107,11 +107,11 @@ namespace Steamless.Unpacker.Variant31.x86
                 var bind = f.GetSectionData(".bind");
 
                 // Attempt to locate the known v3.x signature..
-                var varient = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
-                if (varient == 0) return false;
+                var variant = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
+                if (variant == 0) return false;
 
                 // Version patterns..
-                var varientPatterns = new List<KeyValuePair<string, int>>
+                var variantPatterns = new List<KeyValuePair<string, int>>
                     {
                         new KeyValuePair<string, int>("55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 68", 0x10),                 // v3.1     [Original version?]
                         new KeyValuePair<string, int>("55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 8D 83", 0x16),              // v3.1.1   [Newer, 3.1.1? (Seen 2015?)]
@@ -120,7 +120,7 @@ namespace Steamless.Unpacker.Variant31.x86
 
                 var headerSize = 0;
                 uint offset = 0;
-                foreach (var p in varientPatterns)
+                foreach (var p in variantPatterns)
                 {
                     offset = Pe32Helpers.FindPattern(bind, p.Key);
                     if (offset <= 0)

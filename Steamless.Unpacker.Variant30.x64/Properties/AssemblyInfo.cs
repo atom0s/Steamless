@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
 [assembly: AssemblyProduct("Steamless.Unpacker.Variant30.x64")]
-[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2019")]
+[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

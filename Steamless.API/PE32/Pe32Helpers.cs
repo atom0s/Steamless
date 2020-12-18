@@ -43,6 +43,11 @@ namespace Steamless.API.PE32
         {
             var size = Marshal.SizeOf(typeof(T));
             var ptr = Marshal.AllocHGlobal(size);
+
+            // Size can land up being bigger than our buffer..
+            if (size > data.Length)
+                size = Math.Min(data.Length, Math.Max(0, size));
+
             Marshal.Copy(data, offset, ptr, size);
             var obj = (T)Marshal.PtrToStructure(ptr, typeof(T));
             Marshal.FreeHGlobal(ptr);

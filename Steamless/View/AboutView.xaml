@@ -216,7 +216,7 @@
                         <Label.OpacityMask>
                             <VisualBrush Visual="{StaticResource appbar_paypal}" />
                         </Label.OpacityMask>
-                        <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=7U7Q2GRT6KUJN" Foreground="Transparent" FontSize="24">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+                        <Hyperlink NavigateUri="https://www.paypal.me/atom0s" Foreground="Transparent" FontSize="24">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="RequestNavigate">
                                     <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
@@ -225,7 +225,7 @@
                         </Hyperlink>
                     </Label>
                     <Label ToolTip="Donate via Paypal" Margin="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Hyperlink NavigateUri="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=7U7Q2GRT6KUJN" Foreground="#c0dd65" >Donate via Paypal
+                        <Hyperlink NavigateUri="https://www.paypal.me/atom0s" Foreground="#c0dd65" >Donate via Paypal
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="RequestNavigate">
                                     <i:InvokeCommandAction Command="{Binding Path=MainWindow.OnOpenHyperlinkCommand, Source={StaticResource ViewModelLocator}}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Hyperlink}}}" />
@@ -303,7 +303,7 @@
                             <LineBreak />
                             All work is original and done for educational purposes.
                             <LineBreak /><LineBreak />
-                            Steam © 2003 - 2016 Valve Corporation. All rights reserved.
+                            Steam © 2003 - 2020 Valve Corporation. All rights reserved.
                         </TextBlock>
                     </StackPanel>
                 </ScrollViewer>

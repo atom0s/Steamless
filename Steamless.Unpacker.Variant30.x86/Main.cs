@@ -98,10 +98,10 @@ namespace Steamless.Unpacker.Variant30.x86
             var bind = f.GetSectionData(".bind");
 
             // Attempt to locate the known v3.x signature..
-            var varient = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
-            if (varient == 0) return 0;
+            var variant = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
+            if (variant == 0) return 0;
 
-            // Attempt to determine the varient version..
+            // Attempt to determine the variant version..
             uint headerSize;
             var offset = Pe32Helpers.FindPattern(bind, "55 8B EC 81 EC ?? ?? ?? ?? 53 ?? ?? ?? ?? ?? 68");
             if (offset == 0)
