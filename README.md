@@ -1,5 +1,7 @@
 # Steamless
 
+[![Support via Github Sponsors](https://img.shields.io/badge/Github-Become%20a%20Sponsor-ff69b4.svg?style=flat&logo=GitHub)](https://github.com/users/atom0s/sponsorship) [![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/atom0s)
+
 Steamless is a DRM remover of the SteamStub variants.
 
 The goal of Steamless is to make a single solution for unpacking all Steam DRM packed files. Steamless aims to support as many games as possible.<br>
@@ -37,7 +39,10 @@ Steamless currently supports the following SteamStub DRM variants:
   * **SteamStub Variant 1**
     * There is currently no support for this version of the DRM.
   * **SteamStub Variant 2**
-    * 32bit version of this variant is supported.
+    * **Variant 2.0.0**
+      * 32bit version of this variant is supported.
+    * **Variant 2.0.1**
+      * 32bit version of this variant is supported.
   * **SteamStub Variant 3**
     * **Variant 3.0.0**
       * 32bit version of this variant is supported.
