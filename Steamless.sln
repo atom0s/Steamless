@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant31.x86", "Steamless.Unpacker.Variant31.x86\Steamless.Unpacker.Variant31.x86.csproj", "{0F2FAE37-F898-4392-B4F6-711954BEEB4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant21.x86", "Steamless.Unpacker.Variant20.x86\Steamless.Unpacker.Variant21.x86.csproj", "{A40154CD-A0FD-4371-8099-CE277E0989AF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant21.x86", "Steamless.Unpacker.Variant21.x86\Steamless.Unpacker.Variant21.x86.csproj", "{A40154CD-A0FD-4371-8099-CE277E0989AF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant31.x64", "Steamless.Unpacker.Variant31.x64\Steamless.Unpacker.Variant31.x64.csproj", "{05F540FB-D14B-4966-8DE2-591B76361CF0}"
 EndProject
