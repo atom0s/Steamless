@@ -23,7 +23,7 @@
  * No warranties are given.
  */
 
-namespace Steamless.Unpacker.Variant20.x86.Classes
+namespace Steamless.Unpacker.Variant21.x86.Classes
 {
     using System;
 

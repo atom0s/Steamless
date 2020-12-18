@@ -23,10 +23,10 @@
  * No warranties are given.
  */
 
-namespace Steamless.Unpacker.Variant20.x86.Classes
+namespace Steamless.Unpacker.Variant21.x86.Classes
 {
     /// <summary>
-    /// Steam Stub Variant 2.0 DRM Flags
+    /// Steam Stub Variant 2.1 DRM Flags
     /// </summary>
     public enum DrmFlags
     {

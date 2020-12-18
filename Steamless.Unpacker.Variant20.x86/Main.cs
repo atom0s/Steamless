@@ -23,7 +23,7 @@
  * No warranties are given.
  */
 
-namespace Steamless.Unpacker.Variant20.x86
+namespace Steamless.Unpacker.Variant21.x86
 {
     using API;
     using API.Crypto;
@@ -200,9 +200,9 @@ namespace Steamless.Unpacker.Variant20.x86
 
             // Determine how to handle the header based on the size..
             if ((structSize / 4) == 0xD0)
-                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header_D0Variant>(headerData);
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header_D0Variant>(headerData);
             else
-                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
+                this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header>(headerData);
 
             return true;
         }

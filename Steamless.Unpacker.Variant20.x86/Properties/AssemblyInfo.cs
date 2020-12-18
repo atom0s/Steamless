@@ -26,12 +26,12 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Steamless.Unpacker.Variant20.x86")]
-[assembly: AssemblyDescription("Steamless SteamStub Variant v2.0 (x86) Unpacker")]
+[assembly: AssemblyTitle("Steamless.Unpacker.Variant21.x86")]
+[assembly: AssemblyDescription("Steamless SteamStub Variant v2.1 (x86) Unpacker")]
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
-[assembly: AssemblyProduct("Steamless.Unpacker.Variant20.x86")]
-[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2019")]
+[assembly: AssemblyProduct("Steamless.Unpacker.Variant21.x86")]
+[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]

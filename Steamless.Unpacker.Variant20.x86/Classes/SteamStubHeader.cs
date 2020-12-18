@@ -23,15 +23,15 @@
  * No warranties are given.
  */
 
-namespace Steamless.Unpacker.Variant20.x86.Classes
+namespace Steamless.Unpacker.Variant21.x86.Classes
 {
     using System.Runtime.InteropServices;
 
     /// <summary>
-    /// SteamStub DRM Variant 2.0 Header
+    /// SteamStub DRM Variant 2.1 Header
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct SteamStub32Var20Header
+    public struct SteamStub32Var21Header
     {
         public uint XorKey; // The base XOR key, if defined, to unpack the file with.
         public uint GetModuleHandleA_idata; // The address of GetModuleHandleA inside of the .idata section.
@@ -59,10 +59,10 @@ namespace Steamless.Unpacker.Variant20.x86.Classes
     }
 
     /// <summary>
-    /// SteamStub DRM Variant 2.0 Header (Header Size: 0xD0 Variant)
+    /// SteamStub DRM Variant 2.1 Header (Header Size: 0xD0 Variant)
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct SteamStub32Var20Header_D0Variant
+    public struct SteamStub32Var21Header_D0Variant
     {
         public uint XorKey; // The base XOR key, if defined, to unpack the file with.
         public uint GetModuleHandleA_idata; // The address of GetModuleHandleA inside of the .idata section.

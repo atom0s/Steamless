@@ -7,8 +7,8 @@
     <ProjectGuid>{A40154CD-A0FD-4371-8099-CE277E0989AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Steamless.Unpacker.Variant20.x86</RootNamespace>
-    <AssemblyName>Steamless.Unpacker.Variant20.x86</AssemblyName>
+    <RootNamespace>Steamless.Unpacker.Variant21.x86</RootNamespace>
+    <AssemblyName>Steamless.Unpacker.Variant21.x86</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
