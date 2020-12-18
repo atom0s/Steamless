@@ -59,12 +59,12 @@ namespace Steamless.Unpacker.Variant21.x86
         /// <summary>
         /// Gets the name of this plugin.
         /// </summary>
-        public override string Name => "SteamStub Variant 2.0 Unpacker (x86)";
+        public override string Name => "SteamStub Variant 2.1 Unpacker (x86)";
 
         /// <summary>
         /// Gets the description of this plugin.
         /// </summary>
-        public override string Description => "Unpacker for the 32bit SteamStub variant 2.0.";
+        public override string Description => "Unpacker for the 32bit SteamStub variant 2.1.";
 
         /// <summary>
         /// Gets the version of this plugin.
@@ -143,7 +143,7 @@ namespace Steamless.Unpacker.Variant21.x86
                 return false;
 
             // Announce we are being unpacked with this packer..
-            this.Log("File is packed with SteamStub Variant 2.0!", LogMessageType.Information);
+            this.Log("File is packed with SteamStub Variant 2.1!", LogMessageType.Information);
 
             this.Log("Step 1 - Read, disassemble and decode the SteamStub DRM header.", LogMessageType.Information);
             if (!this.Step1())
