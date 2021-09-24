@@ -395,11 +395,12 @@ namespace Steamless.Unpacker.Variant21.x86
                     var aesKey = this.PayloadData.Skip(this.SteamDrmpOffsets[5]).Take(32).ToArray();
                     var aesIv = this.PayloadData.Skip(this.SteamDrmpOffsets[6]).Take(16).ToArray();
                     var codeStolen = this.PayloadData.Skip(this.SteamDrmpOffsets[7]).Take(16).ToArray();
+                    var encryptedSize = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[4]).Take(4).ToArray(), 0);
 
                     // Restore the stolen data then read the rest of the section data..
-                    codeSectionData = new byte[mainSection.SizeOfRawData + codeStolen.Length];
+                    codeSectionData = new byte[encryptedSize + codeStolen.Length];
                     Array.Copy(codeStolen, 0, codeSectionData, 0, codeStolen.Length);
-                    Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(mainSection.VirtualAddress), codeSectionData, codeStolen.Length, mainSection.SizeOfRawData);
+                    Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(mainSection.VirtualAddress), codeSectionData, codeStolen.Length, encryptedSize);
 
                     // Decrypt the code section..
                     var aes = new AesHelper(aesKey, aesIv);
