@@ -363,6 +363,15 @@ namespace Steamless.API.PE64
             /// Gets if this structure is valid for a PE file.
             /// </summary>
             public bool IsValid => this.SizeOfRawData != 0 && this.PointerToRawData != 0;
+
+            /// <summary>
+            /// Overrides the ToString handler to return the section name.
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return this.SectionName;
+            }
         }
 
         /// <summary>

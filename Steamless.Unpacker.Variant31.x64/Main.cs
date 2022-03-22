@@ -358,8 +358,6 @@ namespace Steamless.Unpacker.Variant31.x64
 
             // Find the code section..
             var codeSection = this.File.GetOwnerSection(this.StubHeader.CodeSectionVirtualAddress);
-            if (codeSection.PointerToRawData == 0 || codeSection.SizeOfRawData == 0)
-                return false;
 
             // Store the code sections index..
             this.CodeSectionIndex = this.File.GetSectionIndex(codeSection);
@@ -388,6 +386,14 @@ namespace Steamless.Unpacker.Variant31.x64
                 var codeSection = this.File.Sections[this.CodeSectionIndex];
                 this.Log($" --> {codeSection.SectionName} linked as main code section.", LogMessageType.Debug);
                 this.Log($" --> {codeSection.SectionName} section is encrypted.", LogMessageType.Debug);
+
+                if (codeSection.SizeOfRawData == 0)
+                {
+                    this.Log($" --> {codeSection.SectionName} section is empty; skipping decryption.", LogMessageType.Debug);
+
+                    this.CodeSectionData = new byte[] { };
+                    return true;
+                }
 
                 // Obtain the code section data..
                 var codeSectionData = new byte[codeSection.SizeOfRawData + this.StubHeader.CodeSectionStolenData.Length];
