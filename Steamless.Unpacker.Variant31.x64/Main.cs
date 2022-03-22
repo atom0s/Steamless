@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2022 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -35,6 +35,7 @@ namespace Steamless.Unpacker.Variant31.x64
     using Classes;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
 
@@ -103,7 +104,7 @@ namespace Steamless.Unpacker.Variant31.x64
                     return false;
 
                 // Obtain the bind section data..
-                var bind = f.GetSectionData(".bind");
+                var bind = f.GetSectionData(".bind").Take(0x3000).ToArray();
 
                 // Attempt to locate the known v3.x signature..
                 var variant = Pe64Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 41 50");

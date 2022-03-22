@@ -1,5 +1,5 @@
 ﻿<!--
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2022 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -119,18 +119,6 @@
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ProgressTotal, FallbackValue=0, Mode=OneWay}" Value="0">
                                     <Setter Property="TextBlock.Text" Value="" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-                <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock.Style>
-                        <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Text" Value="{Binding MainWindow.UpdateCount, Source={StaticResource ViewModelLocator}, FallbackValue=0, StringFormat={}{0:#} downloads remaining...}" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding MainWindow.UpdateCount, Source={StaticResource ViewModelLocator}, FallbackValue=0}" Value="0">
-                                    <Setter Property="Text" Value="" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>

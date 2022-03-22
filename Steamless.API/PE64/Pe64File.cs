@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2022 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -139,6 +139,9 @@ namespace Steamless.API.PE64
 
                 // Read the Tls directory..
                 this.TlsDirectory = Pe64Helpers.GetStructure<NativeApi64.ImageTlsDirectory64>(this.FileData, (int)addr);
+
+                if (this.TlsDirectory.AddressOfCallBacks == 0) 
+                    return true;
 
                 // Read the Tls callbacks..
                 addr = this.GetRvaFromVa(this.TlsDirectory.AddressOfCallBacks);
