@@ -84,12 +84,14 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Row="0" Content="Verbose Output" Margin="2" ToolTip="If enabled, Steamless will allow logging of debug messages." IsChecked="{Binding Options.VerboseOutput}" />
                 <CheckBox Grid.Row="1" Content="Keep Bind Section" Margin="2" ToolTip="The bind section should be kept within the file after unpacking." IsChecked="{Binding Options.KeepBindSection}" />
                 <CheckBox Grid.Row="2" Content="Dump Payload To Disk" Margin="2" ToolTip="Dumps the payload to disk where the target file is located. (File will be saved with the .payload extension.)" IsChecked="{Binding Options.DumpPayloadToDisk}" />
                 <CheckBox Grid.Row="3" Content="Dump SteamDRMP.dll To Disk" Margin="2" ToolTip="Dumps the SteamDRMP.dll to disk where the target file is located." IsChecked="{Binding Options.DumpSteamDrmpToDisk}" />
                 <CheckBox Grid.Row="4" Content="Use Experimental Features" Margin="2" ToolTip="Enables the use of experimental features." IsChecked="{Binding Options.UseExperimentalFeatures}" />
+                <CheckBox Grid.Row="5" Content="Don't Realign Sections" Margin="2" ToolTip="Disables realignment of sections when unpacking." IsChecked="{Binding Options.DontRealignSections}" />
             </Grid>
         </GroupBox>
 

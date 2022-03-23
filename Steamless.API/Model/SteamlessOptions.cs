@@ -37,6 +37,7 @@ namespace Steamless.API.Model
             this.DumpPayloadToDisk = false;
             this.DumpSteamDrmpToDisk = false;
             this.UseExperimentalFeatures = false;
+            this.DontRealignSections = false;
         }
 
         /// <summary>
@@ -82,6 +83,15 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("UseExperimentalFeatures");
             set => this.Set("UseExperimentalFeatures", value);
+        }
+
+        /// <summary>
+        /// Gets or sets the don't realign sections option value.
+        /// </summary>
+        public bool DontRealignSections
+        {
+            get => this.Get<bool>("DontRealignSections");
+            set => this.Set("DontRealignSections", value);
         }
     }
 }

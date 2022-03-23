@@ -304,17 +304,23 @@ namespace Steamless.API.PE32
         /// <summary>
         /// Rebuilds the sections by aligning them as needed. Updates the Nt headers to
         /// correct the new SizeOfImage after alignment is completed.
+        /// 
+        /// <param name="realign"></param>
         /// </summary>
-        public void RebuildSections()
+        public void RebuildSections(bool realign = true)
         {
             for (var x = 0; x < this.Sections.Count; x++)
             {
                 // Obtain the current section and realign the data..
                 var section = this.Sections[x];
-                section.VirtualAddress = this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
-                section.VirtualSize = this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
-                section.PointerToRawData = this.GetAlignment(section.PointerToRawData, this.NtHeaders.OptionalHeader.FileAlignment);
-                section.SizeOfRawData = this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);
+
+                if (realign)
+                {
+                    section.VirtualAddress = this.GetAlignment(section.VirtualAddress, this.NtHeaders.OptionalHeader.SectionAlignment);
+                    section.VirtualSize = this.GetAlignment(section.VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
+                    section.PointerToRawData = this.GetAlignment(section.PointerToRawData, this.NtHeaders.OptionalHeader.FileAlignment);
+                    section.SizeOfRawData = this.GetAlignment(section.SizeOfRawData, this.NtHeaders.OptionalHeader.FileAlignment);
+                }
 
                 // Store the sections updates..
                 this.Sections[x] = section;

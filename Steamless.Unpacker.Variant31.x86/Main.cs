@@ -433,7 +433,7 @@ namespace Steamless.Unpacker.Variant31.x86
             try
             {
                 // Rebuild the file sections..
-                this.File.RebuildSections();
+                this.File.RebuildSections(this.Options.DontRealignSections == false);
 
                 // Open the unpacked file for writing..
                 var unpackedPath = this.File.FilePath + ".unpacked.exe";

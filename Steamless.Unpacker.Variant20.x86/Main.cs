@@ -286,7 +286,7 @@ namespace Steamless.Unpacker.Variant20.x86
             try
             {
                 // Rebuild the file sections..
-                this.File.RebuildSections();
+                this.File.RebuildSections(this.Options.DontRealignSections == false);
             }
             catch
             {
