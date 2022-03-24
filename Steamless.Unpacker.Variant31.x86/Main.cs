@@ -234,7 +234,7 @@ namespace Steamless.Unpacker.Variant31.x86
 
             // Tls was valid for the real oep..
             this.TlsAsOep = true;
-            this.TlsOepRva = fileOffset;
+            this.TlsOepRva = this.File.GetRvaFromVa(this.File.TlsCallbacks[0]);
             return true;
         }
 
@@ -247,7 +247,7 @@ namespace Steamless.Unpacker.Variant31.x86
         private bool Step2()
         {
             // Obtain the payload address and size..
-            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
+            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
             var payloadSize = (this.StubHeader.PayloadSize + 0x0F) & 0xFFFFFFF0;
 
             // Do nothing if there is no payload..
@@ -297,7 +297,7 @@ namespace Steamless.Unpacker.Variant31.x86
             try
             {
                 // Obtain the SteamDRMP.dll file address and data..
-                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
+                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
                 var drmpData = new byte[this.StubHeader.DRMPDllSize];
                 Array.Copy(this.File.FileData, drmpAddr, drmpData, 0, drmpData.Length);
 

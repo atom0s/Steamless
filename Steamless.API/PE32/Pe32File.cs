@@ -328,7 +328,7 @@ namespace Steamless.API.PE32
 
             // Update the size of the image..
             var ntHeaders = this.NtHeaders;
-            ntHeaders.OptionalHeader.SizeOfImage = this.Sections.Last().VirtualAddress + this.Sections.Last().VirtualSize;
+            ntHeaders.OptionalHeader.SizeOfImage = (uint)this.GetAlignment(this.Sections.Last().VirtualAddress + this.Sections.Last().VirtualSize, this.NtHeaders.OptionalHeader.SectionAlignment);
             this.NtHeaders = ntHeaders;
         }
 
