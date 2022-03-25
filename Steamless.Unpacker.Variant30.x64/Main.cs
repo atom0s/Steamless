@@ -35,6 +35,7 @@ namespace Steamless.Unpacker.Variant30.x64
     using Classes;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
 
@@ -190,6 +191,48 @@ namespace Steamless.Unpacker.Variant30.x64
         }
 
         /// <summary>
+        /// Rebuilds the file TlsCallback information and repairs the proper OEP.
+        /// </summary>
+        /// <returns></returns>
+        private bool RebuildTlsCallbackInformation()
+        {
+            // Ensure the modified main TlsCallback is within the .bind section..
+            var section = this.File.GetOwnerSection(this.File.GetRvaFromVa(this.File.TlsCallbacks[0]));
+            if (!section.IsValid || string.Compare(section.SectionName, ".bind", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.CompareOptions.IgnoreCase) != 0)
+                return false;
+
+            // Obtain the section that holds the Tls directory information..
+            var addr = this.File.GetFileOffsetFromRva(this.File.GetRvaFromVa(this.File.TlsDirectory.AddressOfCallBacks));
+            var tlsd = this.File.GetOwnerSection(addr);
+
+            if (!tlsd.IsValid)
+                return false;
+
+            addr -= tlsd.PointerToRawData;
+
+            // Restore the true original TlsCallback address..
+            var callback = BitConverter.GetBytes(this.File.NtHeaders.OptionalHeader.ImageBase + this.StubHeader.OriginalEntryPoint);
+            Array.Copy(callback, 0, this.File.GetSectionData(this.File.GetSectionIndex(tlsd)), (int)addr, callback.Length);
+
+            // Find the original entry point function..
+            var entry = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
+            var data = this.File.FileData.Skip((int)entry).Take(0x100).ToArray();
+
+            // Find the XOR key from within the function..
+            var res = Pe64Helpers.FindPattern(data, "48 81 EA ?? ?? ?? ?? 8B 12 81 F2");
+            if (res == 0)
+                return false;
+
+            // Decrypt and recalculate the true OEP address..
+            var key = (ulong)(this.StubHeader.XorKey ^ BitConverter.ToInt32(data, (int)res + 0x0B));
+            var off = (ulong)((this.File.NtHeaders.OptionalHeader.ImageBase + this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint) + key);
+
+            // Store the proper OEP..
+            this.TlsOepOverride = (uint)(off - this.File.NtHeaders.OptionalHeader.ImageBase);
+            return true;
+        }
+
+        /// <summary>
         /// Step #1
         /// 
         /// Read, decode and validate the SteamStub DRM header.
@@ -234,7 +277,13 @@ namespace Steamless.Unpacker.Variant30.x64
             // Tls was valid for the real oep..
             this.TlsAsOep = true;
             this.TlsOepRva = this.File.GetRvaFromVa(this.File.TlsCallbacks[0]);
-            return true;
+
+            // Is the TlsCallback replacing the OEP..
+            if (this.StubHeader.HasTlsCallback != 1 || this.File.TlsCallbacks[0] == 0)
+                return true;
+
+            // Rebuild the file Tls callback information..
+            return this.RebuildTlsCallbackInformation();
         }
 
         /// <summary>
@@ -447,7 +496,10 @@ namespace Steamless.Unpacker.Variant30.x64
 
                 // Update the entry point of the file..
                 var ntHeaders = this.File.NtHeaders;
-                ntHeaders.OptionalHeader.AddressOfEntryPoint = this.StubHeader.OriginalEntryPoint;
+                if (this.StubHeader.HasTlsCallback != 1)
+                    ntHeaders.OptionalHeader.AddressOfEntryPoint = this.StubHeader.OriginalEntryPoint;
+                else
+                    ntHeaders.OptionalHeader.AddressOfEntryPoint = this.TlsOepOverride;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -509,6 +561,11 @@ namespace Steamless.Unpacker.Variant30.x64
         /// Gets or sets the Tls Oep Rva if it is being used as the Oep.
         /// </summary>
         private ulong TlsOepRva { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Tls Oep override value to use when the stub has set the HasTlsCallback flag.
+        /// </summary>
+        private uint TlsOepOverride { get; set; }
 
         /// <summary>
         /// Gets or sets the Steamless options this file was requested to process with.
