@@ -99,7 +99,7 @@ namespace Steamless.API.PE32
         /// <param name="data"></param>
         /// <param name="pattern"></param>
         /// <returns></returns>
-        public static uint FindPattern(byte[] data, string pattern)
+        public static long FindPattern(byte[] data, string pattern)
         {
             try
             {
@@ -123,11 +123,11 @@ namespace Steamless.API.PE32
                         return (uint)x;
                 }
 
-                return 0;
+                return -1;
             }
             catch
             {
-                return 0;
+                return -1;
             }
         }
     }

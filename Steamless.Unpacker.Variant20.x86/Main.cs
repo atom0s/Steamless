@@ -109,7 +109,7 @@ namespace Steamless.Unpacker.Variant20.x86
                 var bind = f.GetSectionData(".bind");
 
                 // Attempt to locate the known v2.0 signature..
-                return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 BE") > 0;
+                return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 BE") != -1;
             }
             catch
             {

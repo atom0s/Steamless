@@ -108,7 +108,8 @@ namespace Steamless.Unpacker.Variant31.x86
 
                 // Attempt to locate the known v3.x signature..
                 var variant = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
-                if (variant == 0) return false;
+                if (variant == -1)
+                    return false;
 
                 // Version patterns..
                 var variantPatterns = new List<KeyValuePair<string, int>>
@@ -119,11 +120,11 @@ namespace Steamless.Unpacker.Variant31.x86
                     };
 
                 var headerSize = 0;
-                uint offset = 0;
+                long offset = 0;
                 foreach (var p in variantPatterns)
                 {
                     offset = Pe32Helpers.FindPattern(bind, p.Key);
-                    if (offset <= 0)
+                    if (offset == -1)
                         continue;
 
                     headerSize = BitConverter.ToInt32(bind, (int)offset + p.Value);
@@ -131,7 +132,7 @@ namespace Steamless.Unpacker.Variant31.x86
                 }
 
                 // Ensure valid data was found..
-                if (offset == 0 || headerSize == 0)
+                if (offset == -1 || headerSize == 0)
                     return false;
 
                 return headerSize == 0xF0;

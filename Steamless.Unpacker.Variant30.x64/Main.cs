@@ -100,15 +100,17 @@ namespace Steamless.Unpacker.Variant30.x64
 
             // Attempt to locate the known v3.x signature..
             var variant = Pe64Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 41 50");
-            if (variant == 0) return 0;
+            if (variant == -1)
+                return 0;
 
             // Attempt to determine the variant version..
             var offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 48"); // 3.0
-            if (offset == 0)
+            if (offset == -1)
                 offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 41"); // 3.1
 
             // Ensure a pattern was found..
-            if (offset == 0) return 0;
+            if (offset == -1)
+                return 0;
 
             // Read the header size.. (The header size is only 32bit!)
             return (uint)Math.Abs(BitConverter.ToInt32(bind, (int)offset + 3));
@@ -220,7 +222,7 @@ namespace Steamless.Unpacker.Variant30.x64
 
             // Find the XOR key from within the function..
             var res = Pe64Helpers.FindPattern(data, "48 81 EA ?? ?? ?? ?? 8B 12 81 F2");
-            if (res == 0)
+            if (res == -1)
                 return false;
 
             // Decrypt and recalculate the true OEP address..
