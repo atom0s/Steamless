@@ -189,6 +189,13 @@ namespace Steamless.Unpacker.Variant30.x64
             if (!this.Step6())
                 return false;
 
+            if (this.Options.RecalculateFileChecksum)
+            {
+                this.Log("Step 7 - Rebuild unpacked file checksum.", LogMessageType.Information);
+                if (!this.Step7())
+                    return false;
+            }
+
             return true;
         }
 
@@ -500,12 +507,13 @@ namespace Steamless.Unpacker.Variant30.x64
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point of the file..
+                // Update the NT headers..
                 var ntHeaders = this.File.NtHeaders;
                 if (this.StubHeader.HasTlsCallback != 1)
                     ntHeaders.OptionalHeader.AddressOfEntryPoint = this.StubHeader.OriginalEntryPoint;
                 else
                     ntHeaders.OptionalHeader.AddressOfEntryPoint = this.TlsOepOverride;
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -556,6 +564,26 @@ namespace Steamless.Unpacker.Variant30.x64
             {
                 fStream?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Step #7
+        /// 
+        /// Recalculate the file checksum.
+        /// </summary>
+        /// <returns></returns>
+        private bool Step7()
+        {
+            var unpackedPath = this.File.FilePath + ".unpacked.exe";
+            if (!Pe64Helpers.UpdateFileChecksum(unpackedPath))
+            {
+                this.Log(" --> Error trying to recalculate unpacked file checksum!", LogMessageType.Error);
+                return false;
+            }
+
+            this.Log(" --> Unpacked file updated with new checksum!", LogMessageType.Success);
+            return true;
+
         }
 
         /// <summary>
