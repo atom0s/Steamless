@@ -36,6 +36,7 @@ namespace Steamless.Unpacker.Variant10.x86
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using System.Runtime.InteropServices;
 
     [SteamlessApiVersion(1, 0)]
     public class Main : SteamlessPlugin
@@ -148,6 +149,13 @@ namespace Steamless.Unpacker.Variant10.x86
             this.Log("Step 3 - Rebuild and save the unpacked file.", LogMessageType.Information);
             if (!this.Step3())
                 return false;
+
+            if (this.Options.RecalculateFileChecksum)
+            {
+                this.Log("Step 4 - Rebuild unpacked file checksum.", LogMessageType.Information);
+                if (!this.Step4())
+                    return false;
+            }
 
             return true;
         }
@@ -267,9 +275,10 @@ namespace Steamless.Unpacker.Variant10.x86
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point of the file..
+                // Update the entry point and checksum of the file..
                 var ntHeaders = this.File.NtHeaders;
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = this.OriginalEntryPoint;
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -316,6 +325,26 @@ namespace Steamless.Unpacker.Variant10.x86
             {
                 fStream?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Step #4
+        /// 
+        /// Recalculate the file checksum.
+        /// </summary>
+        /// <returns></returns>
+        private bool Step4()
+        {
+            var unpackedPath = this.File.FilePath + ".unpacked.exe";
+            if (!Pe32Helpers.UpdateFileChecksum(unpackedPath))
+            {
+                this.Log(" --> Error trying to recalculate unpacked file checksum!", LogMessageType.Error);
+                return false;
+            }
+
+            this.Log(" --> Unpacked file updated with new checksum!", LogMessageType.Success);
+            return true;
+
         }
 
         /// <summary>

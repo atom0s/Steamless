@@ -39,6 +39,7 @@ namespace Steamless.API.Model
             this.UseExperimentalFeatures = false;
             this.DontRealignSections = true;
             this.ZeroDosStubData = true;
+            this.RecalculateFileChecksum = false;
         }
 
         /// <summary>
@@ -102,6 +103,15 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("ZeroDosStubData");
             set => this.Set("ZeroDosStubData", value);
+        }
+
+        /// <summary>
+        /// Gets or sets if the file checksum should be recalculated.
+        /// </summary>
+        public bool RecalculateFileChecksum
+        {
+            get => this.Get<bool>("RecalculateFileChecksum");
+            set => this.Set("RecalculateFileChecksum", value);
         }
     }
 }
