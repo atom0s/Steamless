@@ -32,7 +32,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
 [assembly: AssemblyProduct("Steamless")]
-[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2020")]
+[assembly: AssemblyCopyright("Copyright © atom0s 2015 - 2022")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
