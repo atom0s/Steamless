@@ -335,6 +335,7 @@ namespace Steamless.Unpacker.Variant20.x86
                 var ntHeaders = this.File.NtHeaders;
                 var lastSection = this.File.Sections[this.File.Sections.Count - 1];
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = this.File.GetRvaFromVa(this.StubHeader.OEP);
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 ntHeaders.OptionalHeader.SizeOfImage = this.File.GetAlignment(lastSection.VirtualAddress + lastSection.VirtualSize, this.File.NtHeaders.OptionalHeader.SectionAlignment);
                 this.File.NtHeaders = ntHeaders;
 

@@ -36,7 +36,6 @@ namespace Steamless.Unpacker.Variant10.x86
     using System.IO;
     using System.Linq;
     using System.Reflection;
-    using System.Runtime.InteropServices;
 
     [SteamlessApiVersion(1, 0)]
     public class Main : SteamlessPlugin
@@ -275,7 +274,7 @@ namespace Steamless.Unpacker.Variant10.x86
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point and checksum of the file..
+                // Update the NT headers..
                 var ntHeaders = this.File.NtHeaders;
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = this.OriginalEntryPoint;
                 ntHeaders.OptionalHeader.CheckSum = 0;

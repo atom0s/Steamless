@@ -459,9 +459,10 @@ namespace Steamless.Unpacker.Variant31.x86
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point of the file..
+                // Update the NT headers..
                 var ntHeaders = this.File.NtHeaders;
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = (uint)this.StubHeader.OriginalEntryPoint;
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
