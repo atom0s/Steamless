@@ -482,6 +482,10 @@ namespace Steamless.Unpacker.Variant30.x64
 
             try
             {
+                // Zero the DosStubData if desired..
+                if (this.Options.ZeroDosStubData && this.File.DosStubSize > 0)
+                    this.File.DosStubData = Enumerable.Repeat((byte)0, (int)this.File.DosStubSize).ToArray();
+
                 // Rebuild the file sections..
                 this.File.RebuildSections(this.Options.DontRealignSections == false);
 

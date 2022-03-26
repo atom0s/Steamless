@@ -37,7 +37,8 @@ namespace Steamless.API.Model
             this.DumpPayloadToDisk = false;
             this.DumpSteamDrmpToDisk = false;
             this.UseExperimentalFeatures = false;
-            this.DontRealignSections = false;
+            this.DontRealignSections = true;
+            this.ZeroDosStubData = true;
         }
 
         /// <summary>
@@ -92,6 +93,15 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("DontRealignSections");
             set => this.Set("DontRealignSections", value);
+        }
+
+        /// <summary>
+        /// Gets or sets if the DOS stub data should be zeroed.
+        /// </summary>
+        public bool ZeroDosStubData
+        {
+            get => this.Get<bool>("ZeroDosStubData");
+            set => this.Set("ZeroDosStubData", value);
         }
     }
 }

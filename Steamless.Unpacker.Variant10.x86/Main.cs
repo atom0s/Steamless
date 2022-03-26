@@ -34,6 +34,7 @@ namespace Steamless.Unpacker.Variant10.x86
     using Classes;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
 
     [SteamlessApiVersion(1, 0)]
@@ -248,6 +249,10 @@ namespace Steamless.Unpacker.Variant10.x86
 
             try
             {
+                // Zero the DosStubData if desired..
+                if (this.Options.ZeroDosStubData && this.File.DosStubSize > 0)
+                    this.File.DosStubData = Enumerable.Repeat((byte)0, (int)this.File.DosStubSize).ToArray();
+
                 // Rebuild the file sections..
                 this.File.RebuildSections(this.Options.DontRealignSections == false);
 
