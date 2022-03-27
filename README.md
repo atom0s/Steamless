@@ -1,63 +1,71 @@
 # Steamless
 
-[![Support via Github Sponsors](https://img.shields.io/badge/Github-Become%20a%20Sponsor-ff69b4.svg?style=flat&logo=GitHub)](https://github.com/users/atom0s/sponsorship) [![Support via PayPal](https://cdn.rawgit.com/twolfson/paypal-github-button/1.0.0/dist/button.svg)](https://www.paypal.me/atom0s)
+Steamless is a DRM remover of the various SteamStub variants applied to applications and games released on Steam via the DRM tool in the Steamworks SDK.
 
-Steamless is a DRM remover of the SteamStub variants.
+Steamless aims to be a single solution for unpacking all variants of the SteamStub DRM, ranging from the very first version to the most recently released.
 
-The goal of Steamless is to make a single solution for unpacking all Steam DRM packed files. Steamless aims to support as many games as possible.<br>
-However, due to personal limited funds, I cannot test every game myself.
+_However, due to personal limited funds, I cannot test every game myself._
 
+# Donations
 
-# What Steamless Wont Do For You
+Want to say thanks for my work on Steamless? Feel free to donate or sponsor me:
 
-Steamless removes the SteamStub DRM protection from games that have it, nothing more.<br>
-If the game you are unpacking makes use of the Steamworks API, Steamless **WILL NOT** remove this layer of DRM.
+  * **GitHub:** https://github.com/users/atom0s/sponsorship
+  * **Paypal:** https://www.paypal.me/atom0s
+  * **Patreon:** https://www.patreon.com/atom0s
 
-  * Steamless will not remove the Steamworks API integrations in any game.
-  * Steamless will not handle CEG (Custom Executable Generation) DRM that is used by some games.
-  * Steamless is not made to assist with piracy.
-  * Steamless is not made to assist with bypassing anti-cheats or other protections.
-  
-This project makes static analysis on the games files that are protected with SteamStub possible.<br>
-Will this allow some games to run without Steam? Yes. But I do not promote piracy and will not help with it at all.
+# What Steamless Will Do
 
-Do not contact me or any contributor to this project with assistance on how to make a game work without Steam.
+Steamless will remove the SteamStub DRM protection layer that is applied via the DRM tool from the Steamworks SDK.
+
+# What Steamless Wont Do
+
+Steamless **WILL NEVER** do any of the following:
+
+  * Steamless will never remove the Steamworks API integration. (via steam_api.dll/steam_api64.dll)
+  * Steamless will never include or distribute any emulator for the Steamworks API integration.
+  * Steamless will never handle Valve's CEG (Custom Executable Generation) DRM that is used on some older games.
+  * Steamless will never promote, encourage, or assist with piracy.
+  * Steamless will never assist with bypassing anti-cheats or other protections in place by games.
+
+Do not ask for help with running games without Steam. Your requests will be ignored/blocked.
+
+That is not the scope or goal of this project.
 
 # What is SteamStub DRM?
 
-```
-Steamworks Digital Rights Management wraps your game's compiled executable and checks to make sure that it is running under an authenticated instance of Steam. This DRM solution is the same as the one used to protect games like Half-Life 2 and Counter-Strike: Source. Steamworks DRM has been heavily road-tested and is customer-friendly. 
-In addition to DRM solutions, Steamworks also offers protection for game through day one release by shipping encrypted media to stores worldwide. There's no worry that your game will leak early from the manufacturing path, because your game stays encrypted until the moment you decide to release it. This protection can be added to your game simply by handing us finished bits or a gold master. 
+From the Steamworks documentation:
 
-ref: hxxps://partner.steamgames.com/documentation/api
-```
+> Steamworks Digital Rights Management wraps your game's compiled executable and checks to make sure that it is running under an authenticated instance of Steam. This DRM solution is the same as the one used to protect games like Half-Life 2 and Counter-Strike: Source. Steamworks DRM has been heavily road-tested and is customer-friendly.
+> In addition to DRM solutions, Steamworks also offers protection for game through day one release by shipping encrypted media to stores worldwide. There's no worry that your game will leak early from the manufacturing path, because your game stays encrypted until the moment you decide to release it. This protection can be added to your game simply by handing us finished bits or a gold master. <br><br>
+> ref: hxxps://partner.steamgames.com/documentation/api
 
 # Supported Versions
 
 Steamless currently supports the following SteamStub DRM variants:
 
   * **SteamStub Variant 1**
-    * There is currently no support for this version of the DRM.
+    * 32bit version is supported. _(Support for this is only tested with 1 file so far.)_
   * **SteamStub Variant 2**
-    * **Variant 2.0.0**
-      * 32bit version of this variant is supported.
-    * **Variant 2.0.1**
-      * 32bit version of this variant is supported.
+    * **v2.0.0**
+      * 32bit version is supported.
+    * **v2.0.1**
+      * 32bit version is supported.
   * **SteamStub Variant 3**
-    * **Variant 3.0.0**
-      * 32bit version of this variant is supported.
-      * 64bit version of this variant is supported.
-    * **Variant 3.0.1**
-      * 32bit version of this variant is supported.
-      * 64bit version of this variant is supported.
-    * **Variant 3.1.0**
-      * 32bit version of this variant is supported.
-      * 64bit version of this variant is supported.
-    * **Variant 3.1.2**
-      * 32bit version of this variant is supported.
-      * 64bit version of this variant is supported.
+    * **v3.0.0**
+      * 32bit version is supported.
+      * 64bit version is supported.
+    * **v3.0.1**
+      * 32bit version is supported.
+      * 64bit version is supported.
+    * **v3.1.0**
+      * 32bit version is supported.
+      * 64bit version is supported.
+    * **v3.1.2**
+      * 32bit version is supported.
+      * 64bit version is supported.
 
-*Please note; these version numbers are superficial. They are an assumed version based on major changes to the DRM over its lifespan.*
+_**Note:** Version numbers are not 'real'. They are superficial and are simply assumed versions based on major changes to the DRM and what has been observed in the various submitted file samples. A better versioning system may come at a later date._
 
 # Legal
 
@@ -90,7 +98,7 @@ You can find his information here: http://pcgamingwiki.com/wiki/User:Cyanic/Stea
 
 # Compiling Steamless
 
-Steamless is coded using Visual Studio 2015 (Update 3) at this time.<br>
+Steamless is coded using Visual Studio 2022.<br>
 To compile, you should only need to load the sln file and compile as-is.
 
 No changes should be needed to the solution or source.
