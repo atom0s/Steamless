@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.Unpacker.Variant10.x86", "Steamless.Unpacker.Variant10.x86\Steamless.Unpacker.Variant10.x86.csproj", "{02B58AB0-9B00-4B31-8D61-9D22D13D2C4A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Steamless.CLI", "Steamless.CLI\Steamless.CLI.csproj", "{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,14 @@ Global
 		{02B58AB0-9B00-4B31-8D61-9D22D13D2C4A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02B58AB0-9B00-4B31-8D61-9D22D13D2C4A}.Release|x86.ActiveCfg = Release|Any CPU
 		{02B58AB0-9B00-4B31-8D61-9D22D13D2C4A}.Release|x86.Build.0 = Release|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Debug|x86.Build.0 = Debug|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Release|x86.ActiveCfg = Release|Any CPU
+		{D128D7AD-2E6F-43BD-BA36-BEA3B9B77437}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

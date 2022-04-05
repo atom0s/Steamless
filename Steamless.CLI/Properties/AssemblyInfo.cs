@@ -25,9 +25,8 @@
 
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Windows;
 
-[assembly: AssemblyTitle("Steamless")]
+[assembly: AssemblyTitle("Steamless.CLI")]
 [assembly: AssemblyDescription("Removes the SteamStub DRM protection from Steam applications.")]
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("atom0s")]
@@ -36,6 +35,6 @@ using System.Windows;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
-[assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
+[assembly: Guid("d128d7ad-2e6f-43bd-ba36-bea3b9b77437")]
 [assembly: AssemblyVersion("3.0.0.15")]
 [assembly: AssemblyFileVersion("3.0.0.15")] 
