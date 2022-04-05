@@ -70,9 +70,9 @@ namespace Steamless.CLI
         static void PrintHelp()
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine("    Steamless.CLI.exe [options] [file]\n");
+            Console.WriteLine("    Steamless.CLI.exe [options] [file]\n\n");
             Console.WriteLine("Options:");
-            Console.WriteLine("    --quiet");
+            Console.WriteLine("    --quiet          - Disables output of debug log messages.");
             Console.WriteLine("    --keepbind       - Keeps the .bind section in the unpacked file.");
             Console.WriteLine("    --keepstub       - Keeps the DOS stub in the unpacked file.");
             Console.WriteLine("    --dumppayload    - Dumps the stub payload to disk.");
