@@ -56,6 +56,7 @@
     <ProjectReference Include="..\Steamless.API\Steamless.API.csproj">
       <Project>{56c95629-3b34-47fe-b988-04274409294f}</Project>
       <Name>Steamless.API</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
