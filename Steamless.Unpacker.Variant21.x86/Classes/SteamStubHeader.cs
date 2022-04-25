@@ -54,8 +54,13 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
         public uint SteamDRMPDllSize; // The offset inside of the payload data holding the size of the SteamDRMP.dll file data.
         public uint XTeaKeys; // The offset inside of the payload data holding the address to the Xtea keys to decrypt the SteamDRMP.dll file.
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x2B8)]
-        public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
+        // The 'StubData' field is dynamically sized based on the needs of the stub version and used options. This is effectively
+        // impossible to 'size' correctly for all header versions, so instead it will be treated separately.
+        //
+        // [MarshalAs(UnmanagedType.ByValArray, SizeConst = ???)]
+        // public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
     }
 
     /// <summary>
@@ -84,7 +89,12 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
         public uint SteamDRMPDllSize; // The offset inside of the payload data holding the size of the SteamDRMP.dll file data.
         public uint XTeaKeys; // The offset inside of the payload data holding the address to the Xtea keys to decrypt the SteamDRMP.dll file.
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x31C)]
-        public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
+        // The 'StubData' field is dynamically sized based on the needs of the stub version and used options. This is effectively
+        // impossible to 'size' correctly for all header versions, so instead it will be treated separately.
+        //
+        // [MarshalAs(UnmanagedType.ByValArray, SizeConst = ???)]
+        // public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
     }
 }

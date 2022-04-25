@@ -187,6 +187,13 @@ namespace Steamless.Unpacker.Variant21.x86
         /// <returns></returns>
         private bool Step1()
         {
+            /**
+             * Note: This version of the stub has a variable length header due to how it builds the 
+             * header information. When the stub is generated, the header has additional string data
+             * that can be dynamically built based on the various options of the protection being used
+             * and other needed API imports. Inside of the stub header, this field is 'StubData'.
+             */
+
             // Obtain the file entry offset..
             var fileOffset = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
 
@@ -207,9 +214,15 @@ namespace Steamless.Unpacker.Variant21.x86
 
             // Determine how to handle the header based on the size..
             if ((structSize / 4) == 0xD0)
+            {
                 this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header_D0Variant>(headerData);
+                this.StubData = headerData.Skip(Marshal.SizeOf(typeof(SteamStub32Var21Header_D0Variant))).ToArray();
+            }
             else
+            {
                 this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header>(headerData);
+                this.StubData = headerData.Skip(Marshal.SizeOf(typeof(SteamStub32Var21Header))).ToArray();
+            }
 
             return true;
         }
@@ -754,6 +767,11 @@ namespace Steamless.Unpacker.Variant21.x86
         /// Gets or sets the DRM stub header.
         /// </summary>
         private dynamic StubHeader { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dynamic field 'StubData' from the header.
+        /// </summary>
+        private byte[] StubData { get; set; }
 
         /// <summary>
         /// Gets or sets the payload data.
