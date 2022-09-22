@@ -73,7 +73,9 @@ namespace Steamless.Model.Tasks
                         });
 
                     // Add the automatic plugin at the start of the list..
-                    sorted.Insert(0, new AutomaticPlugin());
+                    var auto = new AutomaticPlugin();
+                    auto.Initialize(vml.LoggingService);
+                    sorted.Insert(0, auto);
 
                     // Set the plugins..
                     vml.MainWindow.Plugins = new ObservableCollection<SteamlessPlugin>(sorted);

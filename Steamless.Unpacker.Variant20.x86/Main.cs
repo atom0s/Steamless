@@ -223,8 +223,13 @@ namespace Steamless.Unpacker.Variant20.x86
 
             // Determine the code section RVA..
             var codeSectionRVA = this.File.NtHeaders.OptionalHeader.BaseOfCode;
-            if (this.StubHeader.CodeSectionVirtualAddress != 0)
-                codeSectionRVA = this.File.GetRvaFromVa(this.StubHeader.CodeSectionVirtualAddress);
+
+            // TODO: This is not really ideal to do but for now this breaks support for other variants of this version..
+            if (this.Options.UseExperimentalFeatures)
+            {
+                if (this.StubHeader.CodeSectionVirtualAddress != 0)
+                    codeSectionRVA = this.File.GetRvaFromVa(this.StubHeader.CodeSectionVirtualAddress);
+            }
 
             // Get the code section..
             var codeSection = this.File.GetOwnerSection(codeSectionRVA);

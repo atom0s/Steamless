@@ -27,7 +27,10 @@ namespace Steamless.Model
 {
     using API;
     using API.Model;
+    using API.PE32;
+    using API.PE64;
     using API.Services;
+    using Steamless.API.Events;
     using System;
     using System.Linq;
     using System.Windows;
@@ -36,6 +39,11 @@ namespace Steamless.Model
     [SteamlessApiVersion(1, 0)]
     internal class AutomaticPlugin : SteamlessPlugin
     {
+        /// <summary>
+        /// Internal logging service instance.
+        /// </summary>
+        private LoggingService m_LoggingService;
+
         /// <summary>
         /// Gets the author of this plugin.
         /// </summary>
@@ -57,12 +65,23 @@ namespace Steamless.Model
         public override Version Version => new Version(1, 0, 0, 0);
 
         /// <summary>
+        /// Internal wrapper to log a message.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="type"></param>
+        private void Log(string msg, LogMessageType type)
+        {
+            this.m_LoggingService.OnAddLogMessage(this, new LogMessageEventArgs(msg, type));
+        }
+
+        /// <summary>
         /// Initialize function called when this plugin is first loaded.
         /// </summary>
         /// <param name="logService"></param>
         /// <returns></returns>
         public override bool Initialize(LoggingService logService)
         {
+            this.m_LoggingService = logService;
             return true;
         }
 
@@ -94,7 +113,43 @@ namespace Steamless.Model
                 return false;
 
             // Query the plugin list for a plugin to process the file..
-            return (from p in plugins where p != this where p.CanProcessFile(file) select p.ProcessFile(file, options)).FirstOrDefault();
+            var ret = (from p in plugins where p != this where p.CanProcessFile(file) select p.ProcessFile(file, options)).FirstOrDefault();
+            if (ret)
+                return ret;
+
+            // Determine if the file was not packed with SteamStub..
+            try
+            {
+                // First attempt to read the file as 32bit..
+                dynamic f = new Pe32File(file);
+
+                if (f.Parse())
+                {
+                    // Check if the file is 64bit..
+                    if (f.IsFile64Bit())
+                    {
+                        f = new Pe64File(file);
+                        if (!f.Parse())
+                            return false;
+                    }
+
+                    // Ensure the file had a .bind section..
+                    if (!f.HasSection(".bind"))
+                    {
+                        this.Log("", LogMessageType.Error);
+                        this.Log("This file does not appear to be packed with SteamStub!", LogMessageType.Error);
+                        this.Log("File missing expected '.bind' section!", LogMessageType.Error);
+                        this.Log("", LogMessageType.Error);
+                        return false;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            return false;
         }
     }
 }
