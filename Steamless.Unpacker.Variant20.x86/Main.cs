@@ -196,7 +196,24 @@ namespace Steamless.Unpacker.Variant20.x86
             this.XorKey = SteamStubHelpers.SteamXor(ref headerData, (uint)headerData.Length, 0);
 
             // Create the stub header..
-            this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20Header>(headerData);
+            switch (structSize)
+            {
+                case 856:
+                    this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20_856_Header>(headerData);
+                    break;
+                case 952:
+                    this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20_952_Header>(headerData);
+                    break;
+                default:
+                    {
+                        this.Log("", LogMessageType.Error);
+                        this.Log($"Invalid/unknown variant header size: {structSize}", LogMessageType.Error);
+                        this.Log("Please report this issue on Steamless' GitHub issue tracker!", LogMessageType.Error);
+                        this.Log("Be sure to include a copy of this games .exe file you are trying to unpack!", LogMessageType.Error);
+                        this.Log("", LogMessageType.Error);
+                        return false;
+                    }
+            }
 
             return true;
         }
