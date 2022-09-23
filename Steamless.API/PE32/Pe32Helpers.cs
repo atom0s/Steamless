@@ -91,55 +91,17 @@ namespace Steamless.API.PE32
         }
 
         /// <summary>
-        /// Calculates the PE checksum of the opened file. (OptionalHeader.Checksum should be 0 before calling this!)
-        /// </summary>
-        /// <param name="fStream"></param>
-        /// <returns></returns>
-        private static byte[] CalculateChecksum(FileStream fStream)
-        {
-            fStream.Position = 0;
-
-            var dataSize = fStream.Length;
-            var totalWords = dataSize / 2;
-            var sumTotal = 0;
-
-            // Process the file data in uint16_t chunks..
-            while (totalWords > 0)
-            {
-                var sumChunk = 0;
-                var chunkWords = totalWords;
-
-                // Prepare next chunk size..
-                if (chunkWords > UInt16.MaxValue)
-                    chunkWords = UInt16.MaxValue;
-
-                totalWords -= chunkWords;
-
-                do
-                {
-                    var data = new byte[2];
-                    fStream.Read(data, 0, 2);
-                    sumChunk += BitConverter.ToUInt16(data, 0);
-                } while (--chunkWords != 0);
-
-                sumTotal += (sumChunk >> 16) + (sumChunk & 0xFFFF);
-            }
-
-            if ((dataSize % 2) != 0)
-                sumTotal += fStream.ReadByte();
-
-            var checksum = (uint)(((sumTotal >> 16) + (sumTotal & 0xFFFF)) + dataSize);
-
-            return BitConverter.GetBytes(checksum);
-        }
-
-        /// <summary>
         /// Updates the given files PE checksum value. (Path is assumed to be a 32bit PE file.)
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
         public static bool UpdateFileChecksum(string path)
         {
+            // Obtain the proper checksum for the file..
+            var ret = NativeApi32.MapFileAndCheckSum(path, out uint HeaderSum, out uint Checksum);
+            if (ret != 0)
+                return false;
+
             FileStream fStream = null;
             var data = new byte[4];
 
@@ -158,16 +120,9 @@ namespace Steamless.API.PE32
                 offset += 4 + (uint)Marshal.SizeOf(typeof(NativeApi32.ImageFileHeader32)) + (uint)Marshal.OffsetOf(typeof(NativeApi32.ImageOptionalHeader32), "CheckSum").ToInt32();
                 fStream.Position = offset;
 
-                // Ensure the checksum is 0 to start..
-                data = new byte[4] { 0, 0, 0, 0 };
+                // Overwrite the file checksum..
+                data = BitConverter.GetBytes(Checksum);
                 fStream.Write(data, 0, 4);
-
-                // Calculate the new checksum..
-                var checksum = CalculateChecksum(fStream);
-
-                // Update the checksum value..
-                fStream.Position = offset;
-                fStream.Write(checksum, 0, 4);
 
                 return true;
             }
