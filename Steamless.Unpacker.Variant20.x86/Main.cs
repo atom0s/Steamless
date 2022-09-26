@@ -201,6 +201,9 @@ namespace Steamless.Unpacker.Variant20.x86
                 case 856:
                     this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20_856_Header>(headerData);
                     break;
+                case 884:
+                    this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20_884_Header>(headerData);
+                    break;
                 case 952:
                     this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var20_952_Header>(headerData);
                     break;
