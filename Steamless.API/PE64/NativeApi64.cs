@@ -77,8 +77,8 @@ namespace Steamless.API.PE64
         public struct ImageNtHeaders64
         {
             [FieldOffset(0)]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public char[] Signature;
+            [MarshalAs(UnmanagedType.U4, SizeConst = 4)]
+            public uint Signature;
 
             [FieldOffset(4)]
             public ImageFileHeader64 FileHeader;
@@ -89,7 +89,7 @@ namespace Steamless.API.PE64
             /// <summary>
             /// Gets if this structure is valid for a PE file.
             /// </summary>
-            public bool IsValid => new string(this.Signature).Trim('\0') == "PE";
+            public bool IsValid => Signature == 0x4550; // PE\0\0
         }
 
         /// <summary>
