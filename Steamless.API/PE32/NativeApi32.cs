@@ -36,9 +36,7 @@ namespace Steamless.API.PE32
         [StructLayout(LayoutKind.Sequential)]
         public struct ImageDosHeader32
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public char[] e_magic;
-
+            public ushort e_magic;
             public ushort e_cblp;
             public ushort e_cp;
             public ushort e_crlc;
@@ -67,7 +65,7 @@ namespace Steamless.API.PE32
             /// <summary>
             /// Gets if this structure is valid for a PE file.
             /// </summary>
-            public bool IsValid => new string(this.e_magic) == "MZ";
+            public bool IsValid => this.e_magic == 0x5A4D;
         }
 
         /// <summary>
@@ -77,8 +75,7 @@ namespace Steamless.API.PE32
         public struct ImageNtHeaders32
         {
             [FieldOffset(0)]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public char[] Signature;
+            public uint Signature;
 
             [FieldOffset(4)]
             public ImageFileHeader32 FileHeader;
@@ -89,7 +86,7 @@ namespace Steamless.API.PE32
             /// <summary>
             /// Gets if this structure is valid for a PE file.
             /// </summary>
-            public bool IsValid => new string(this.Signature).Trim('\0') == "PE";
+            public bool IsValid => this.Signature == 0x00004550;
         }
 
         /// <summary>
