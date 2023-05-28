@@ -143,10 +143,18 @@ namespace Steamless.Model
                         return false;
                     }
                 }
+                else
+                {
+                    this.Log("", LogMessageType.Error);
+                    this.Log("This file does not appear to be a valid Win32 PE file. Cannot unpack!", LogMessageType.Error);
+                    this.Log("", LogMessageType.Error);
+                }
             }
-            catch
+            catch (Exception e)
             {
-                return false;
+                this.Log("Failed to parse or unpack the selected file due to an exception:", LogMessageType.Error);
+                this.Log("", LogMessageType.Error);
+                this.Log(e.Message, LogMessageType.Error);
             }
 
             return false;
