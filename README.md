@@ -1,3 +1,17 @@
+<div align="center">
+    <img width="200" src="https://github.com/atom0s/Steamless/raw/master/repo/steamless.png" alt="steamless">
+    </br>
+</div>
+
+<div align="center">
+    <a href="https://discord.gg/UmXNvjq"><img src="https://img.shields.io/discord/704822642846466096.svg?style=for-the-badge" alt="Discord server" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/license-CCA--NCND%20v4-blue?style=for-the-badge" alt="license" /></a>
+    <br/>
+    <a href="https://github.com/sponsors/atom0s/"><img src="https://img.shields.io/github/sponsors/atom0s?style=for-the-badge" alt="sponsors" /></a>
+    <a href="https://paypal.me/atom0s"><img src="https://img.shields.io/badge/donate-PayPal-blue?style=for-the-badge" alt="paypal" /></a>
+    <a href="https://patreon.com/atom0s"><img src="https://img.shields.io/badge/sponsor-Patreon-blue?style=for-the-badge" alt="paypal" /></a>
+</div>
+
 # Steamless
 
 Steamless is a DRM remover of the various SteamStub variants applied to applications and games released on Steam via the DRM tool in the Steamworks SDK.
