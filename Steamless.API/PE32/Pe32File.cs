@@ -85,12 +85,14 @@ namespace Steamless.API.PE32
             if (this.FileData.Length < (Marshal.SizeOf(typeof(NativeApi32.ImageDosHeader32)) + Marshal.SizeOf(typeof(NativeApi32.ImageNtHeaders32))))
                 return false;
 
-            // Read the file headers..
+            // Read the file DOS header..
             this.DosHeader = Pe32Helpers.GetStructure<NativeApi32.ImageDosHeader32>(this.FileData);
-            this.NtHeaders = Pe32Helpers.GetStructure<NativeApi32.ImageNtHeaders32>(this.FileData, this.DosHeader.e_lfanew);
+            if (!this.DosHeader.IsValid)
+                return false;
 
-            // Validate the headers..
-            if (!this.DosHeader.IsValid || !this.NtHeaders.IsValid)
+            // Read the file NT headers..
+            this.NtHeaders = Pe32Helpers.GetStructure<NativeApi32.ImageNtHeaders32>(this.FileData, this.DosHeader.e_lfanew);
+            if (!this.NtHeaders.IsValid)
                 return false;
 
             // Read and store the dos header if it exists..
