@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -73,7 +73,9 @@ namespace Steamless.Model.Tasks
                         });
 
                     // Add the automatic plugin at the start of the list..
-                    sorted.Insert(0, new AutomaticPlugin());
+                    var auto = new AutomaticPlugin();
+                    auto.Initialize(vml.LoggingService);
+                    sorted.Insert(0, auto);
 
                     // Set the plugins..
                     vml.MainWindow.Plugins = new ObservableCollection<SteamlessPlugin>(sorted);

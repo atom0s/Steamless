@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -111,7 +111,7 @@ namespace Steamless.Unpacker.Variant21.x86
                 var bind = f.GetSectionData(".bind");
 
                 // Attempt to locate the known v2.x signature..
-                return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 C7") > 0;
+                return Pe32Helpers.FindPattern(bind, "53 51 52 56 57 55 8B EC 81 EC 00 10 00 00 C7") != -1;
             }
             catch
             {
@@ -169,6 +169,13 @@ namespace Steamless.Unpacker.Variant21.x86
             if (!this.Step6())
                 return false;
 
+            if (this.Options.RecalculateFileChecksum)
+            {
+                this.Log("Step 7 - Rebuild unpacked file checksum.", LogMessageType.Information);
+                if (!this.Step7())
+                    return false;
+            }
+
             return true;
         }
 
@@ -180,6 +187,13 @@ namespace Steamless.Unpacker.Variant21.x86
         /// <returns></returns>
         private bool Step1()
         {
+            /**
+             * Note: This version of the stub has a variable length header due to how it builds the 
+             * header information. When the stub is generated, the header has additional string data
+             * that can be dynamically built based on the various options of the protection being used
+             * and other needed API imports. Inside of the stub header, this field is 'StubData'.
+             */
+
             // Obtain the file entry offset..
             var fileOffset = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
 
@@ -200,9 +214,15 @@ namespace Steamless.Unpacker.Variant21.x86
 
             // Determine how to handle the header based on the size..
             if ((structSize / 4) == 0xD0)
+            {
                 this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header_D0Variant>(headerData);
+                this.StubData = headerData.Skip(Marshal.SizeOf(typeof(SteamStub32Var21Header_D0Variant))).ToArray();
+            }
             else
+            {
                 this.StubHeader = Pe32Helpers.GetStructure<SteamStub32Var21Header>(headerData);
+                this.StubData = headerData.Skip(Marshal.SizeOf(typeof(SteamStub32Var21Header))).ToArray();
+            }
 
             return true;
         }
@@ -300,15 +320,15 @@ namespace Steamless.Unpacker.Variant21.x86
         {
             // Scan for the needed data by a known pattern for the block of offset data..
             var drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8D ?? ?? ?? ?? ?? 05");
-            if (drmpOffset == 0)
+            if (drmpOffset == -1)
             {
                 // Fall-back pattern scan for certain files that fail with the above pattern..
                 drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B");
-                if (drmpOffset == 0)
+                if (drmpOffset == -1)
                 {
                     // Fall-back pattern (2).. (Seen in some v2 variants.)
                     drmpOffset = Pe32Helpers.FindPattern(this.SteamDrmpData, "8B ?? ?? ?? ?? ?? 89 ?? ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B ?? ?? ?? ?? ?? A3 ?? ?? ?? ?? 8B");
-                    if (drmpOffset == 0)
+                    if (drmpOffset == -1)
                         return false;
 
                     // Use fallback offsets if this worked..
@@ -395,11 +415,12 @@ namespace Steamless.Unpacker.Variant21.x86
                     var aesKey = this.PayloadData.Skip(this.SteamDrmpOffsets[5]).Take(32).ToArray();
                     var aesIv = this.PayloadData.Skip(this.SteamDrmpOffsets[6]).Take(16).ToArray();
                     var codeStolen = this.PayloadData.Skip(this.SteamDrmpOffsets[7]).Take(16).ToArray();
+                    var encryptedSize = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[4]).Take(4).ToArray(), 0);
 
                     // Restore the stolen data then read the rest of the section data..
-                    codeSectionData = new byte[mainSection.SizeOfRawData + codeStolen.Length];
+                    codeSectionData = new byte[encryptedSize + codeStolen.Length];
                     Array.Copy(codeStolen, 0, codeSectionData, 0, codeStolen.Length);
-                    Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(mainSection.VirtualAddress), codeSectionData, codeStolen.Length, mainSection.SizeOfRawData);
+                    Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(mainSection.VirtualAddress), codeSectionData, codeStolen.Length, encryptedSize);
 
                     // Decrypt the code section..
                     var aes = new AesHelper(aesKey, aesIv);
@@ -431,8 +452,12 @@ namespace Steamless.Unpacker.Variant21.x86
 
             try
             {
+                // Zero the DosStubData if desired..
+                if (this.Options.ZeroDosStubData && this.File.DosStubSize > 0)
+                    this.File.DosStubData = Enumerable.Repeat((byte)0, (int)this.File.DosStubSize).ToArray();
+
                 // Rebuild the file sections..
-                this.File.RebuildSections();
+                this.File.RebuildSections(this.Options.DontRealignSections == false);
 
                 // Open the unpacked file for writing..
                 var unpackedPath = this.File.FilePath + ".unpacked.exe";
@@ -450,7 +475,8 @@ namespace Steamless.Unpacker.Variant21.x86
                 var lastSection = this.File.Sections[this.File.Sections.Count - 1];
                 var originalEntry = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[2]).Take(4).ToArray(), 0);
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = this.File.GetRvaFromVa(originalEntry);
-                ntHeaders.OptionalHeader.SizeOfImage = lastSection.VirtualAddress + lastSection.VirtualSize;
+                ntHeaders.OptionalHeader.CheckSum = 0;
+                ntHeaders.OptionalHeader.SizeOfImage = this.File.GetAlignment(lastSection.VirtualAddress + lastSection.VirtualSize, this.File.NtHeaders.OptionalHeader.SectionAlignment);
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -501,6 +527,26 @@ namespace Steamless.Unpacker.Variant21.x86
             {
                 fStream?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Step #7
+        /// 
+        /// Recalculate the file checksum.
+        /// </summary>
+        /// <returns></returns>
+        private bool Step7()
+        {
+            var unpackedPath = this.File.FilePath + ".unpacked.exe";
+            if (!Pe32Helpers.UpdateFileChecksum(unpackedPath))
+            {
+                this.Log(" --> Error trying to recalculate unpacked file checksum!", LogMessageType.Error);
+                return false;
+            }
+
+            this.Log(" --> Unpacked file updated with new checksum!", LogMessageType.Success);
+            return true;
+
         }
 
         /// <summary>
@@ -721,6 +767,11 @@ namespace Steamless.Unpacker.Variant21.x86
         /// Gets or sets the DRM stub header.
         /// </summary>
         private dynamic StubHeader { get; set; }
+
+        /// <summary>
+        /// Gets or sets the dynamic field 'StubData' from the header.
+        /// </summary>
+        private byte[] StubData { get; set; }
 
         /// <summary>
         /// Gets or sets the payload data.

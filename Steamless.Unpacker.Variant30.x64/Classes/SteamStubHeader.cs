@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -63,7 +63,7 @@ namespace Steamless.Unpacker.Variant30.x64.Classes
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x04)]
         public uint[] EncryptionKeys; // Encryption keys used for decrypting SteamDRMP.dll file.
 
-        public uint Unknown0003; // [Cyanic: This field is most likely used to flag if the file has Tls data or not.]
+        public uint HasTlsCallback; // Flag that states if the file was protected with a TlsCallback present.
         public uint Unknown0004;
         public uint Unknown0005;
         public uint Unknown0006;

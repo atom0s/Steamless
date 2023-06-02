@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -35,6 +35,7 @@ namespace Steamless.Unpacker.Variant30.x64
     using Classes;
     using System;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
 
@@ -99,15 +100,17 @@ namespace Steamless.Unpacker.Variant30.x64
 
             // Attempt to locate the known v3.x signature..
             var variant = Pe64Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 41 50");
-            if (variant == 0) return 0;
+            if (variant == -1)
+                return 0;
 
             // Attempt to determine the variant version..
             var offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 48"); // 3.0
-            if (offset == 0)
+            if (offset == -1)
                 offset = Pe64Helpers.FindPattern(bind, "48 8D 91 ?? ?? ?? ?? 41"); // 3.1
 
             // Ensure a pattern was found..
-            if (offset == 0) return 0;
+            if (offset == -1)
+                return 0;
 
             // Read the header size.. (The header size is only 32bit!)
             return (uint)Math.Abs(BitConverter.ToInt32(bind, (int)offset + 3));
@@ -186,6 +189,55 @@ namespace Steamless.Unpacker.Variant30.x64
             if (!this.Step6())
                 return false;
 
+            if (this.Options.RecalculateFileChecksum)
+            {
+                this.Log("Step 7 - Rebuild unpacked file checksum.", LogMessageType.Information);
+                if (!this.Step7())
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Rebuilds the file TlsCallback information and repairs the proper OEP.
+        /// </summary>
+        /// <returns></returns>
+        private bool RebuildTlsCallbackInformation()
+        {
+            // Ensure the modified main TlsCallback is within the .bind section..
+            var section = this.File.GetOwnerSection(this.File.GetRvaFromVa(this.File.TlsCallbacks[0]));
+            if (!section.IsValid || string.Compare(section.SectionName, ".bind", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.CompareOptions.IgnoreCase) != 0)
+                return false;
+
+            // Obtain the section that holds the Tls directory information..
+            var addr = this.File.GetFileOffsetFromRva(this.File.GetRvaFromVa(this.File.TlsDirectory.AddressOfCallBacks));
+            var tlsd = this.File.GetOwnerSection(addr);
+
+            if (!tlsd.IsValid)
+                return false;
+
+            addr -= tlsd.PointerToRawData;
+
+            // Restore the true original TlsCallback address..
+            var callback = BitConverter.GetBytes(this.File.NtHeaders.OptionalHeader.ImageBase + this.StubHeader.OriginalEntryPoint);
+            Array.Copy(callback, 0, this.File.GetSectionData(this.File.GetSectionIndex(tlsd)), (int)addr, callback.Length);
+
+            // Find the original entry point function..
+            var entry = this.File.GetFileOffsetFromRva(this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint);
+            var data = this.File.FileData.Skip((int)entry).Take(0x100).ToArray();
+
+            // Find the XOR key from within the function..
+            var res = Pe64Helpers.FindPattern(data, "48 81 EA ?? ?? ?? ?? 8B 12 81 F2");
+            if (res == -1)
+                return false;
+
+            // Decrypt and recalculate the true OEP address..
+            var key = (ulong)(this.StubHeader.XorKey ^ BitConverter.ToInt32(data, (int)res + 0x0B));
+            var off = (ulong)((this.File.NtHeaders.OptionalHeader.ImageBase + this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint) + key);
+
+            // Store the proper OEP..
+            this.TlsOepOverride = (uint)(off - this.File.NtHeaders.OptionalHeader.ImageBase);
             return true;
         }
 
@@ -233,8 +285,14 @@ namespace Steamless.Unpacker.Variant30.x64
 
             // Tls was valid for the real oep..
             this.TlsAsOep = true;
-            this.TlsOepRva = fileOffset;
-            return true;
+            this.TlsOepRva = this.File.GetRvaFromVa(this.File.TlsCallbacks[0]);
+
+            // Is the TlsCallback replacing the OEP..
+            if (this.StubHeader.HasTlsCallback != 1 || this.File.TlsCallbacks[0] == 0)
+                return true;
+
+            // Rebuild the file Tls callback information..
+            return this.RebuildTlsCallbackInformation();
         }
 
         /// <summary>
@@ -246,7 +304,7 @@ namespace Steamless.Unpacker.Variant30.x64
         private bool Step2()
         {
             // Obtain the payload address and size..
-            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
+            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
             var payloadSize = (this.StubHeader.PayloadSize + 0x0F) & 0xFFFFFFF0;
 
             // Do nothing if there is no payload..
@@ -296,7 +354,7 @@ namespace Steamless.Unpacker.Variant30.x64
             try
             {
                 // Obtain the SteamDRMP.dll file address and data..
-                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
+                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
                 var drmpData = new byte[this.StubHeader.DRMPDllSize];
                 Array.Copy(this.File.FileData, (long)drmpAddr, drmpData, 0, drmpData.Length);
 
@@ -431,8 +489,12 @@ namespace Steamless.Unpacker.Variant30.x64
 
             try
             {
+                // Zero the DosStubData if desired..
+                if (this.Options.ZeroDosStubData && this.File.DosStubSize > 0)
+                    this.File.DosStubData = Enumerable.Repeat((byte)0, (int)this.File.DosStubSize).ToArray();
+
                 // Rebuild the file sections..
-                this.File.RebuildSections();
+                this.File.RebuildSections(this.Options.DontRealignSections == false);
 
                 // Open the unpacked file for writing..
                 var unpackedPath = this.File.FilePath + ".unpacked.exe";
@@ -445,9 +507,13 @@ namespace Steamless.Unpacker.Variant30.x64
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point of the file..
+                // Update the NT headers..
                 var ntHeaders = this.File.NtHeaders;
-                ntHeaders.OptionalHeader.AddressOfEntryPoint = this.StubHeader.OriginalEntryPoint;
+                if (this.StubHeader.HasTlsCallback != 1)
+                    ntHeaders.OptionalHeader.AddressOfEntryPoint = this.StubHeader.OriginalEntryPoint;
+                else
+                    ntHeaders.OptionalHeader.AddressOfEntryPoint = this.TlsOepOverride;
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -501,6 +567,26 @@ namespace Steamless.Unpacker.Variant30.x64
         }
 
         /// <summary>
+        /// Step #7
+        /// 
+        /// Recalculate the file checksum.
+        /// </summary>
+        /// <returns></returns>
+        private bool Step7()
+        {
+            var unpackedPath = this.File.FilePath + ".unpacked.exe";
+            if (!Pe64Helpers.UpdateFileChecksum(unpackedPath))
+            {
+                this.Log(" --> Error trying to recalculate unpacked file checksum!", LogMessageType.Error);
+                return false;
+            }
+
+            this.Log(" --> Unpacked file updated with new checksum!", LogMessageType.Success);
+            return true;
+
+        }
+
+        /// <summary>
         /// Gets or sets if the Tls callback is being used as the Oep.
         /// </summary>
         private bool TlsAsOep { get; set; }
@@ -509,6 +595,11 @@ namespace Steamless.Unpacker.Variant30.x64
         /// Gets or sets the Tls Oep Rva if it is being used as the Oep.
         /// </summary>
         private ulong TlsOepRva { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Tls Oep override value to use when the stub has set the HasTlsCallback flag.
+        /// </summary>
+        private uint TlsOepOverride { get; set; }
 
         /// <summary>
         /// Gets or sets the Steamless options this file was requested to process with.

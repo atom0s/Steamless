@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -27,7 +27,10 @@ namespace Steamless.Model
 {
     using API;
     using API.Model;
+    using API.PE32;
+    using API.PE64;
     using API.Services;
+    using Steamless.API.Events;
     using System;
     using System.Linq;
     using System.Windows;
@@ -36,6 +39,11 @@ namespace Steamless.Model
     [SteamlessApiVersion(1, 0)]
     internal class AutomaticPlugin : SteamlessPlugin
     {
+        /// <summary>
+        /// Internal logging service instance.
+        /// </summary>
+        private LoggingService m_LoggingService;
+
         /// <summary>
         /// Gets the author of this plugin.
         /// </summary>
@@ -57,12 +65,23 @@ namespace Steamless.Model
         public override Version Version => new Version(1, 0, 0, 0);
 
         /// <summary>
+        /// Internal wrapper to log a message.
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="type"></param>
+        private void Log(string msg, LogMessageType type)
+        {
+            this.m_LoggingService.OnAddLogMessage(this, new LogMessageEventArgs(msg, type));
+        }
+
+        /// <summary>
         /// Initialize function called when this plugin is first loaded.
         /// </summary>
         /// <param name="logService"></param>
         /// <returns></returns>
         public override bool Initialize(LoggingService logService)
         {
+            this.m_LoggingService = logService;
             return true;
         }
 
@@ -94,7 +113,51 @@ namespace Steamless.Model
                 return false;
 
             // Query the plugin list for a plugin to process the file..
-            return (from p in plugins where p != this where p.CanProcessFile(file) select p.ProcessFile(file, options)).FirstOrDefault();
+            var ret = (from p in plugins where p != this where p.CanProcessFile(file) select p.ProcessFile(file, options)).FirstOrDefault();
+            if (ret)
+                return ret;
+
+            // Determine if the file was not packed with SteamStub..
+            try
+            {
+                // First attempt to read the file as 32bit..
+                dynamic f = new Pe32File(file);
+
+                if (f.Parse())
+                {
+                    // Check if the file is 64bit..
+                    if (f.IsFile64Bit())
+                    {
+                        f = new Pe64File(file);
+                        if (!f.Parse())
+                            return false;
+                    }
+
+                    // Ensure the file had a .bind section..
+                    if (!f.HasSection(".bind"))
+                    {
+                        this.Log("", LogMessageType.Error);
+                        this.Log("This file does not appear to be packed with SteamStub!", LogMessageType.Error);
+                        this.Log("File missing expected '.bind' section!", LogMessageType.Error);
+                        this.Log("", LogMessageType.Error);
+                        return false;
+                    }
+                }
+                else
+                {
+                    this.Log("", LogMessageType.Error);
+                    this.Log("This file does not appear to be a valid Win32 PE file. Cannot unpack!", LogMessageType.Error);
+                    this.Log("", LogMessageType.Error);
+                }
+            }
+            catch (Exception e)
+            {
+                this.Log("Failed to parse or unpack the selected file due to an exception:", LogMessageType.Error);
+                this.Log("", LogMessageType.Error);
+                this.Log(e.Message, LogMessageType.Error);
+            }
+
+            return false;
         }
     }
 }

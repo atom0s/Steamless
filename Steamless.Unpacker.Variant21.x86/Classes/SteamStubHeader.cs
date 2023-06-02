@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -34,11 +34,11 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
     public struct SteamStub32Var21Header
     {
         public uint XorKey; // The base XOR key, if defined, to unpack the file with.
-        public uint GetModuleHandleA_idata; // The address of GetModuleHandleA inside of the .idata section.
-        public uint GetModuleHandleW_idata; // The address of GetModuleHandleW inside of the .idata section.
-        public uint GetProcAddress_idata; // The address of GetProcAddress inside of the .idata section.
-        public uint LoadLibraryA_idata; // The address of LoadLibraryA inside of the .idata section.
-        public uint Unknown0000; // Unknown (Was 0 when testing. Possibly LoadLibraryW.)
+        public uint GetModuleHandleA; // The address of GetModuleHandleA. (If set.)
+        public uint GetModuleHandleW; // The address of GetModuleHandleW. (If set.)
+        public uint GetProcAddress; // The address of GetProcAddress. (If set.)
+        public uint LoadLibraryA; // The address of LoadLibraryA. (If set.)
+        public uint LoadLibraryW; // The address of LoadLibraryW. (If set.)
         public uint BindSectionVirtualAddress; // The virtual address to the .bind section.
         public uint BindStartFunctionSize; // The size of the start function from the .bind section.
         public uint PayloadKeyMatch; // The key inside of the SteamDRMP.dll file that is matched to this structures data. (This matches the first 4 bytes of the payload data.)
@@ -54,8 +54,13 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
         public uint SteamDRMPDllSize; // The offset inside of the payload data holding the size of the SteamDRMP.dll file data.
         public uint XTeaKeys; // The offset inside of the payload data holding the address to the Xtea keys to decrypt the SteamDRMP.dll file.
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x31C)]
-        public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
+        // The 'StubData' field is dynamically sized based on the needs of the stub version and used options. This is effectively
+        // impossible to 'size' correctly for all header versions, so instead it will be treated separately.
+        //
+        // [MarshalAs(UnmanagedType.ByValArray, SizeConst = ???)]
+        // public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
     }
 
     /// <summary>
@@ -65,10 +70,10 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
     public struct SteamStub32Var21Header_D0Variant
     {
         public uint XorKey; // The base XOR key, if defined, to unpack the file with.
-        public uint GetModuleHandleA_idata; // The address of GetModuleHandleA inside of the .idata section.
-        public uint GetModuleHandleW_idata; // The address of GetModuleHandleW inside of the .idata section.
-        public uint GetProcAddress_idata; // The address of GetProcAddress inside of the .idata section.
-        public uint LoadLibraryA_idata; // The address of LoadLibraryA inside of the .idata section.
+        public uint GetModuleHandleA; // The address of GetModuleHandleA. (If set.)
+        public uint GetModuleHandleW; // The address of GetModuleHandleW. (If set.)
+        public uint GetProcAddress; // The address of GetProcAddress. (If set.)
+        public uint LoadLibraryA; // The address of LoadLibraryA. (If set.)
         public uint BindSectionVirtualAddress; // The virtual address to the .bind section.
         public uint BindStartFunctionSize; // The size of the start function from the .bind section.
         public uint PayloadKeyMatch; // The key inside of the SteamDRMP.dll file that is matched to this structures data. (This matches the first 4 bytes of the payload data.)
@@ -84,7 +89,12 @@ namespace Steamless.Unpacker.Variant21.x86.Classes
         public uint SteamDRMPDllSize; // The offset inside of the payload data holding the size of the SteamDRMP.dll file data.
         public uint XTeaKeys; // The offset inside of the payload data holding the address to the Xtea keys to decrypt the SteamDRMP.dll file.
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x31C)]
-        public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
+        // The 'StubData' field is dynamically sized based on the needs of the stub version and used options. This is effectively
+        // impossible to 'size' correctly for all header versions, so instead it will be treated separately.
+        //
+        // [MarshalAs(UnmanagedType.ByValArray, SizeConst = ???)]
+        // public byte[] StubData; // Misc stub data, such as strings, error messages, etc.
+        //
     }
 }

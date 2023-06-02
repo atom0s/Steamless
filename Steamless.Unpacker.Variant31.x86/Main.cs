@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -36,6 +36,7 @@ namespace Steamless.Unpacker.Variant31.x86
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Security.Cryptography;
 
@@ -108,7 +109,8 @@ namespace Steamless.Unpacker.Variant31.x86
 
                 // Attempt to locate the known v3.x signature..
                 var variant = Pe32Helpers.FindPattern(bind, "E8 00 00 00 00 50 53 51 52 56 57 55 8B 44 24 1C 2D 05 00 00 00 8B CC 83 E4 F0 51 51 51 50");
-                if (variant == 0) return false;
+                if (variant == -1)
+                    return false;
 
                 // Version patterns..
                 var variantPatterns = new List<KeyValuePair<string, int>>
@@ -119,11 +121,11 @@ namespace Steamless.Unpacker.Variant31.x86
                     };
 
                 var headerSize = 0;
-                uint offset = 0;
+                long offset = 0;
                 foreach (var p in variantPatterns)
                 {
                     offset = Pe32Helpers.FindPattern(bind, p.Key);
-                    if (offset <= 0)
+                    if (offset == -1)
                         continue;
 
                     headerSize = BitConverter.ToInt32(bind, (int)offset + p.Value);
@@ -131,7 +133,7 @@ namespace Steamless.Unpacker.Variant31.x86
                 }
 
                 // Ensure valid data was found..
-                if (offset == 0 || headerSize == 0)
+                if (offset == -1 || headerSize == 0)
                     return false;
 
                 return headerSize == 0xF0;
@@ -190,6 +192,13 @@ namespace Steamless.Unpacker.Variant31.x86
             if (!this.Step6())
                 return false;
 
+            if (this.Options.RecalculateFileChecksum)
+            {
+                this.Log("Step 7 - Rebuild unpacked file checksum.", LogMessageType.Information);
+                if (!this.Step7())
+                    return false;
+            }
+
             return true;
         }
 
@@ -234,7 +243,7 @@ namespace Steamless.Unpacker.Variant31.x86
 
             // Tls was valid for the real oep..
             this.TlsAsOep = true;
-            this.TlsOepRva = fileOffset;
+            this.TlsOepRva = this.File.GetRvaFromVa(this.File.TlsCallbacks[0]);
             return true;
         }
 
@@ -247,7 +256,7 @@ namespace Steamless.Unpacker.Variant31.x86
         private bool Step2()
         {
             // Obtain the payload address and size..
-            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
+            var payloadAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset);
             var payloadSize = (this.StubHeader.PayloadSize + 0x0F) & 0xFFFFFFF0;
 
             // Do nothing if there is no payload..
@@ -297,7 +306,7 @@ namespace Steamless.Unpacker.Variant31.x86
             try
             {
                 // Obtain the SteamDRMP.dll file address and data..
-                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
+                var drmpAddr = this.File.GetFileOffsetFromRva(this.TlsAsOep ? this.TlsOepRva - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset : this.File.NtHeaders.OptionalHeader.AddressOfEntryPoint - this.StubHeader.BindSectionOffset + this.StubHeader.DRMPDllOffset);
                 var drmpData = new byte[this.StubHeader.DRMPDllSize];
                 Array.Copy(this.File.FileData, drmpAddr, drmpData, 0, drmpData.Length);
 
@@ -432,8 +441,12 @@ namespace Steamless.Unpacker.Variant31.x86
 
             try
             {
+                // Zero the DosStubData if desired..
+                if (this.Options.ZeroDosStubData && this.File.DosStubSize > 0)
+                    this.File.DosStubData = Enumerable.Repeat((byte)0, (int)this.File.DosStubSize).ToArray();
+
                 // Rebuild the file sections..
-                this.File.RebuildSections();
+                this.File.RebuildSections(this.Options.DontRealignSections == false);
 
                 // Open the unpacked file for writing..
                 var unpackedPath = this.File.FilePath + ".unpacked.exe";
@@ -446,9 +459,10 @@ namespace Steamless.Unpacker.Variant31.x86
                 if (this.File.DosStubSize > 0)
                     fStream.WriteBytes(this.File.DosStubData);
 
-                // Update the entry point of the file..
+                // Update the NT headers..
                 var ntHeaders = this.File.NtHeaders;
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = (uint)this.StubHeader.OriginalEntryPoint;
+                ntHeaders.OptionalHeader.CheckSum = 0;
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..
@@ -499,6 +513,26 @@ namespace Steamless.Unpacker.Variant31.x86
             {
                 fStream?.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Step #7
+        /// 
+        /// Recalculate the file checksum.
+        /// </summary>
+        /// <returns></returns>
+        private bool Step7()
+        {
+            var unpackedPath = this.File.FilePath + ".unpacked.exe";
+            if (!Pe32Helpers.UpdateFileChecksum(unpackedPath))
+            {
+                this.Log(" --> Error trying to recalculate unpacked file checksum!", LogMessageType.Error);
+                return false;
+            }
+
+            this.Log(" --> Unpacked file updated with new checksum!", LogMessageType.Success);
+            return true;
+
         }
 
         /// <summary>

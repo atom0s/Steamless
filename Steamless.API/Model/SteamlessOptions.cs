@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -37,6 +37,9 @@ namespace Steamless.API.Model
             this.DumpPayloadToDisk = false;
             this.DumpSteamDrmpToDisk = false;
             this.UseExperimentalFeatures = false;
+            this.DontRealignSections = true;
+            this.ZeroDosStubData = true;
+            this.RecalculateFileChecksum = false;
         }
 
         /// <summary>
@@ -82,6 +85,33 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("UseExperimentalFeatures");
             set => this.Set("UseExperimentalFeatures", value);
+        }
+
+        /// <summary>
+        /// Gets or sets the don't realign sections option value.
+        /// </summary>
+        public bool DontRealignSections
+        {
+            get => this.Get<bool>("DontRealignSections");
+            set => this.Set("DontRealignSections", value);
+        }
+
+        /// <summary>
+        /// Gets or sets if the DOS stub data should be zeroed.
+        /// </summary>
+        public bool ZeroDosStubData
+        {
+            get => this.Get<bool>("ZeroDosStubData");
+            set => this.Set("ZeroDosStubData", value);
+        }
+
+        /// <summary>
+        /// Gets or sets if the file checksum should be recalculated.
+        /// </summary>
+        public bool RecalculateFileChecksum
+        {
+            get => this.Get<bool>("RecalculateFileChecksum");
+            set => this.Set("RecalculateFileChecksum", value);
         }
     }
 }

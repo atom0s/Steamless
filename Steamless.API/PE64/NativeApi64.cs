@@ -1,5 +1,5 @@
 ﻿/**
- * Steamless - Copyright (c) 2015 - 2020 atom0s [atom0s@live.com]
+ * Steamless - Copyright (c) 2015 - 2023 atom0s [atom0s@live.com]
  *
  * This work is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-nc-nd/4.0/ or send a letter to
@@ -36,9 +36,7 @@ namespace Steamless.API.PE64
         [StructLayout(LayoutKind.Sequential)]
         public struct ImageDosHeader64
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
-            public char[] e_magic;
-
+            public ushort e_magic;
             public ushort e_cblp;
             public ushort e_cp;
             public ushort e_crlc;
@@ -67,7 +65,7 @@ namespace Steamless.API.PE64
             /// <summary>
             /// Gets if this structure is valid for a PE file.
             /// </summary>
-            public bool IsValid => new string(this.e_magic) == "MZ";
+            public bool IsValid => this.e_magic == 0x5A4D;
         }
 
         /// <summary>
@@ -77,8 +75,7 @@ namespace Steamless.API.PE64
         public struct ImageNtHeaders64
         {
             [FieldOffset(0)]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-            public char[] Signature;
+            public uint Signature;
 
             [FieldOffset(4)]
             public ImageFileHeader64 FileHeader;
@@ -89,7 +86,7 @@ namespace Steamless.API.PE64
             /// <summary>
             /// Gets if this structure is valid for a PE file.
             /// </summary>
-            public bool IsValid => new string(this.Signature).Trim('\0') == "PE";
+            public bool IsValid => this.Signature == 0x00004550;
         }
 
         /// <summary>
@@ -363,6 +360,15 @@ namespace Steamless.API.PE64
             /// Gets if this structure is valid for a PE file.
             /// </summary>
             public bool IsValid => this.SizeOfRawData != 0 && this.PointerToRawData != 0;
+
+            /// <summary>
+            /// Overrides the ToString handler to return the section name.
+            /// </summary>
+            /// <returns></returns>
+            public override string ToString()
+            {
+                return this.SectionName;
+            }
         }
 
         /// <summary>
@@ -595,5 +601,15 @@ namespace Steamless.API.PE64
             public uint SizeOfZeroFill;
             public uint Characteristics;
         }
+
+        /// <summary>
+        /// imagehlp!MapFileAndChecksum
+        /// </summary>
+        /// <param name="Filename"></param>
+        /// <param name="HeaderSum"></param>
+        /// <param name="CheckSum"></param>
+        /// <returns></returns>
+        [DllImport("imagehlp.dll", CharSet = CharSet.Auto)]
+        public static extern int MapFileAndCheckSum(string Filename, out uint HeaderSum, out uint CheckSum);
     }
 }
