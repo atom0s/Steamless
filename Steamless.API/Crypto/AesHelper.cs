@@ -151,8 +151,8 @@ namespace Steamless.API.Crypto
 
                 // Decrypt the data..
                 var totalBuffer = new List<byte>();
-                var buffer = new byte[2048];
-                while ((cStream.Read(buffer, 0, 2048)) > 0)
+                var buffer = new byte[16];
+                while ((cStream.Read(buffer, 0, 16)) > 0)
                     totalBuffer.AddRange(buffer);
 
                 return totalBuffer.ToArray();
