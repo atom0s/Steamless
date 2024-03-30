@@ -404,9 +404,9 @@ namespace Steamless.Unpacker.Variant31.x86
                 this.Log($" --> {codeSection.SectionName} section is encrypted.", LogMessageType.Debug);
 
                 // Obtain the code section data..
-                var codeSectionData = new byte[codeSection.SizeOfRawData + this.StubHeader.CodeSectionStolenData.Length];
+                var codeSectionData = new byte[(long)this.StubHeader.CodeSectionRawSize + this.StubHeader.CodeSectionStolenData.Length];
                 Array.Copy(this.StubHeader.CodeSectionStolenData, 0, codeSectionData, 0, this.StubHeader.CodeSectionStolenData.Length);
-                Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(codeSection.VirtualAddress), codeSectionData, this.StubHeader.CodeSectionStolenData.Length, codeSection.SizeOfRawData);
+                Array.Copy(this.File.FileData, this.File.GetFileOffsetFromRva(codeSection.VirtualAddress), codeSectionData, this.StubHeader.CodeSectionStolenData.Length, (long)this.StubHeader.CodeSectionRawSize);
 
                 // Create the AES decryption helper..
                 var aes = new AesHelper(this.StubHeader.AES_Key, this.StubHeader.AES_IV);
@@ -417,8 +417,11 @@ namespace Steamless.Unpacker.Variant31.x86
                 if (data == null)
                     return false;
 
-                // Set the code section override data..
-                this.CodeSectionData = data;
+                // Merge the code section data into the original..
+                var sectionData = this.File.SectionData[this.CodeSectionIndex];
+                Array.Copy(data, sectionData, (long)this.StubHeader.CodeSectionRawSize);
+
+                this.CodeSectionData = sectionData;
 
                 return true;
             }
