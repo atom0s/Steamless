@@ -395,6 +395,8 @@ namespace Steamless.Unpacker.Variant21.x86
             // Save the code section index for later use..
             this.CodeSectionIndex = this.File.GetSectionIndex(mainSection);
 
+            uint encryptedSize = 0;
+
             // Determine if we are using encryption on the section..
             var flags = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[0]).Take(4).ToArray(), 0);
             if ((flags & (uint)DrmFlags.NoEncryption) == (uint)DrmFlags.NoEncryption)
@@ -415,7 +417,7 @@ namespace Steamless.Unpacker.Variant21.x86
                     var aesKey = this.PayloadData.Skip(this.SteamDrmpOffsets[5]).Take(32).ToArray();
                     var aesIv = this.PayloadData.Skip(this.SteamDrmpOffsets[6]).Take(16).ToArray();
                     var codeStolen = this.PayloadData.Skip(this.SteamDrmpOffsets[7]).Take(16).ToArray();
-                    var encryptedSize = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[4]).Take(4).ToArray(), 0);
+                    encryptedSize = BitConverter.ToUInt32(this.PayloadData.Skip(this.SteamDrmpOffsets[4]).Take(4).ToArray(), 0);
 
                     // Restore the stolen data then read the rest of the section data..
                     codeSectionData = new byte[encryptedSize + codeStolen.Length];
@@ -434,8 +436,11 @@ namespace Steamless.Unpacker.Variant21.x86
                 }
             }
 
-            // Store the section data..
-            this.CodeSectionData = codeSectionData;
+            // Merge the code section data..
+            var sectionData = this.File.SectionData[this.CodeSectionIndex];
+            Array.Copy(codeSectionData, sectionData, encryptedSize);
+
+            this.CodeSectionData = sectionData;
 
             return true;
         }
