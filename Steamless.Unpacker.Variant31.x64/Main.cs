@@ -463,6 +463,13 @@ namespace Steamless.Unpacker.Variant31.x64
                 var ntHeaders = this.File.NtHeaders;
                 ntHeaders.OptionalHeader.AddressOfEntryPoint = (uint)this.StubHeader.OriginalEntryPoint;
                 ntHeaders.OptionalHeader.CheckSum = 0;
+
+                if(this.Options.RemoveCertificateTable)
+                {
+                    ntHeaders.OptionalHeader.CertificateTable.Size = 0;
+                    ntHeaders.OptionalHeader.CertificateTable.VirtualAddress = 0;
+                }
+
                 this.File.NtHeaders = ntHeaders;
 
                 // Write the NT headers to the file..

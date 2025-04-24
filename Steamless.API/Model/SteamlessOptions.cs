@@ -40,6 +40,7 @@ namespace Steamless.API.Model
             this.DontRealignSections = true;
             this.ZeroDosStubData = true;
             this.RecalculateFileChecksum = false;
+            this.RemoveCertificateTable = true;
         }
 
         /// <summary>
@@ -112,6 +113,12 @@ namespace Steamless.API.Model
         {
             get => this.Get<bool>("RecalculateFileChecksum");
             set => this.Set("RecalculateFileChecksum", value);
+        }
+
+        public bool RemoveCertificateTable
+        {
+            get => this.Get<bool>("RemoveCertificateTable");
+            set => this.Set("RemoveCertificateTable", value);
         }
     }
 }

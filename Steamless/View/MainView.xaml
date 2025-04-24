@@ -87,6 +87,7 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <CheckBox Grid.Row="0" Content="Verbose Output" Margin="2" ToolTip="If enabled, Steamless will allow logging of debug messages." IsChecked="{Binding Options.VerboseOutput}" />
                 <CheckBox Grid.Row="1" Content="Keep Bind Section" Margin="2" ToolTip="The bind section should be kept within the file after unpacking." IsChecked="{Binding Options.KeepBindSection}" />
@@ -96,6 +97,7 @@
                 <CheckBox Grid.Row="5" Content="Don't Realign Sections" Margin="2" ToolTip="Disables realignment of sections when unpacking." IsChecked="{Binding Options.DontRealignSections}" />
                 <CheckBox Grid.Row="6" Content="Zero DOS Stub Data" Margin="2" ToolTip="Sets the DOS stub data to 00's." IsChecked="{Binding Options.ZeroDosStubData}" />
                 <CheckBox Grid.Row="7" Content="Recalculate File Checksum" Margin="2" ToolTip="Recalculates the file checksum in the unpacked file." IsChecked="{Binding Options.RecalculateFileChecksum}" />
+                <CheckBox Grid.Row="8" Content="Remove Certificate Table" Margin="2" ToolTip="Removes the security directory from the optional data directories." IsChecked="{Binding Options.RemoveCertificateTable}" />
             </Grid>
         </GroupBox>
 
