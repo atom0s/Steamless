@@ -130,9 +130,10 @@ namespace Steamless.API.Crypto
         /// <returns></returns>
         public byte[] Decrypt(byte[] data, CipherMode mode, PaddingMode padding)
         {
+            if (data == null || data.Length == 0)
+                return null;
+
             ICryptoTransform decryptor = null;
-            MemoryStream mStream = null;
-            CryptoStream cStream = null;
 
             try
             {
@@ -143,19 +144,36 @@ namespace Steamless.API.Crypto
                 // Create the decryptor..
                 decryptor = this.m_AesCryptoProvider.CreateDecryptor(this.m_OriginalKey, this.m_OriginalIv);
 
-                // Create a memory stream for our data..
-                mStream = new MemoryStream(data);
+                // Decrypt into a single preallocated buffer instead of growing a List<byte>
+                // 16 bytes at a time. The old approach doubled the list capacity (up to 2x
+                // the input) and then copied everything again via ToArray(), needing roughly
+                // 2.5x the input size on top of the already loaded file data. For a large
+                // packed executable that exhausts the address space of a 32bit process.
+                var output = new byte[data.Length];
+                var written = 0;
+                var offset = 0;
 
-                // Create the crypto stream..
-                cStream = new CryptoStream(mStream, decryptor, CryptoStreamMode.Read);
+                // Process in 64KiB chunks (a multiple of the AES block size)..
+                const int chunkSize = 0x10000;
+                while (data.Length - offset >= chunkSize)
+                {
+                    written += decryptor.TransformBlock(data, offset, chunkSize, output, written);
+                    offset += chunkSize;
+                }
 
-                // Decrypt the data..
-                var totalBuffer = new List<byte>();
-                var buffer = new byte[16];
-                while ((cStream.Read(buffer, 0, 16)) > 0)
-                    totalBuffer.AddRange(buffer);
+                // Flush the final chunk (and any block the transformer held back)..
+                var tail = decryptor.TransformFinalBlock(data, offset, data.Length - offset);
+                if (tail.Length > 0)
+                {
+                    Buffer.BlockCopy(tail, 0, output, written, tail.Length);
+                    written += tail.Length;
+                }
 
-                return totalBuffer.ToArray();
+                // PaddingMode.None preserves the length; trim defensively if it does not..
+                if (written != output.Length)
+                    Array.Resize(ref output, written);
+
+                return output;
             }
             catch
             {
@@ -163,8 +181,6 @@ namespace Steamless.API.Crypto
             }
             finally
             {
-                cStream?.Dispose();
-                mStream?.Dispose();
                 decryptor?.Dispose();
             }
         }
